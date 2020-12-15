@@ -1,36 +1,24 @@
+import Entity.User;
+import database.DataRepository;
 import database.DatabaseConnexion;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Collection;
 
 public class Main {
 
     public static void main(String[] args){
 
+        // initialize a connexion to the DB
         DatabaseConnexion conn = new DatabaseConnexion();
 
-        String query = "SELECT * FROM users";
+        // Create the repository for future DB call's
+        DataRepository repo = new DataRepository(conn.getDbConnection());
 
-        try {
-
-            Statement stmt = conn.getDbConnection().createStatement();
-            ResultSet res = stmt.executeQuery(query);
-
-            while (res.next()) {
-                System.out.println(
-                        res.getString("first_name") +
-                        res.getString("last_name")
-                );
-            }
-
-        } catch (SQLException e) {
-
-            System.out.println(e.getMessage());
-
-        }
+        Collection<User> users = repo.query("SELECT * FROM users", User.class);
 
         conn.closeConnexion();
+
+        users.forEach(System.out::println);
 
     }
 }
