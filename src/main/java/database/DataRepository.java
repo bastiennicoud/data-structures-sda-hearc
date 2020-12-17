@@ -1,5 +1,7 @@
 package database;
 
+import Entity.User;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
@@ -35,16 +37,12 @@ public class DataRepository {
             // SQL query execution
             Statement statement = dbConnection.createStatement();
             ResultSet results = statement.executeQuery(query);
-
             // Get the constructor for the corresponding Entity by reflexion
             Constructor<E> construct = entityClass.getConstructor(ResultSet.class);
-
             // Iterates trough the query results
             while (results.next()) {
-
-                // hydrate entities by calling the entity reflected constructor
+                // Hydrate entities by calling the reflected entity constructor
                 datas.add(construct.newInstance(results));
-
             }
 
         } catch (SQLException e) {
@@ -58,6 +56,17 @@ public class DataRepository {
         }
 
         return datas;
+
+    }
+
+    /**
+     * Find all elements from the table corresponding to the entity
+     * @param entityClass
+     * @return
+     */
+    public <E> Collection<E> findAll(Class<E> entityClass) {
+
+
 
     }
 }

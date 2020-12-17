@@ -16,6 +16,8 @@ public class Main {
 
         Collection<User> users = repo.query("SELECT * FROM users", User.class);
 
+        Collection<User> userss = repo.findAll(User.class);
+
         conn.closeConnexion();
 
         users.forEach(System.out::println);

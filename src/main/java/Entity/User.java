@@ -1,8 +1,11 @@
 package Entity;
 
+import database.annotations.Table;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Table("users")
 public class User extends Entity {
 
     public int id;
@@ -25,6 +28,11 @@ public class User extends Entity {
 
     }
 
+
+    /**
+     * @param dbResults Database results from data repository
+     * @throws SQLException
+     */
     public User(ResultSet dbResults) throws SQLException {
 
         this(
