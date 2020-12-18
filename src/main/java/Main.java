@@ -20,11 +20,11 @@ public class Main {
                 new EntityHydrator()
         );
 
-        Collection<User> users = null;
-
         try {
 
-            users = repo.query("SELECT * FROM users", User.class);
+            Collection<User> users = repo.findAll(User.class);
+
+            users.forEach(System.out::println);
 
         } catch (SQLException | HydrationException throwables) {
 
@@ -32,11 +32,7 @@ public class Main {
 
         }
 
-        Collection<User> userss = repo.findAll(User.class);
-
         conn.closeConnexion();
-
-        users.forEach(System.out::println);
 
     }
 

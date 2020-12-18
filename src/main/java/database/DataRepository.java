@@ -1,13 +1,10 @@
 package database;
 
 import database.entity.Entity;
-import database.annotations.Field;
-import database.annotations.Table;
 import database.entity.EntityAnnotationReflector;
 import database.exceptions.HydrationException;
 
 import java.sql.*;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -59,9 +56,9 @@ public class DataRepository {
      * @param entityClass The entity for which you want to retrieve datas
      * @return A collection of the entity type
      */
-    public <E extends Entity> Collection<E> findAll(Class<E> entityClass) {
+    public <E extends Entity> Collection<E> findAll(Class<E> entityClass) throws SQLException, HydrationException {
 
-        EntityAnnotationReflector<E> entityReflector = new EntityAnnotationReflector<E>(entityClass);
+        EntityAnnotationReflector<E> entityReflector = new EntityAnnotationReflector<>(entityClass);
 
         // Generate a select query with parameters annotated on the Entity class
         String sql = String.format(
@@ -70,9 +67,8 @@ public class DataRepository {
                 entityReflector.getTableName()
         );
 
-        System.out.println(sql);
+        return query(sql, entityClass);
 
-        return null;
     }
 
 }
