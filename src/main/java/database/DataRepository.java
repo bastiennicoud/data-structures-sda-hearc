@@ -1,8 +1,9 @@
 package database;
 
-import Entity.Entity;
+import database.entity.Entity;
 import database.annotations.Field;
 import database.annotations.Table;
+import database.entity.EntityAnnotationReflector;
 import database.exceptions.HydrationException;
 
 import java.sql.*;
@@ -60,15 +61,13 @@ public class DataRepository {
      */
     public <E extends Entity> Collection<E> findAll(Class<E> entityClass) {
 
+        EntityAnnotationReflector<E> entityReflector = new EntityAnnotationReflector<E>(entityClass);
+
         // Generate a select query with parameters annotated on the Entity class
         String sql = String.format(
                 "SELECT %1$s FROM %2$s",
-                // Get the column name form the Field annotations of the entity fields
-                Arrays.stream(entityClass.getDeclaredFields())
-                      .map(field -> field.getDeclaredAnnotation(Field.class).value())
-                      .collect(Collectors.joining(",")),
-                // Get the table name from the entity Table annotation
-                entityClass.getDeclaredAnnotation(Table.class).value()
+                entityReflector.getColumnsNames().collect(Collectors.joining(", ")),
+                entityReflector.getTableName()
         );
 
         System.out.println(sql);

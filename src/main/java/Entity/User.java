@@ -2,6 +2,7 @@ package Entity;
 
 import database.annotations.Field;
 import database.annotations.Table;
+import database.entity.Entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

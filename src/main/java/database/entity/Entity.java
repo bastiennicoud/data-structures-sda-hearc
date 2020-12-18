@@ -1,4 +1,4 @@
-package Entity;
+package database.entity;
 
 import java.sql.ResultSet;
 
