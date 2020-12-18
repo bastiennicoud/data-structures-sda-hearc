@@ -5,6 +5,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotate Entity with database table name
+ * Allows DataRepository to use shortcuts query methods with this entity
  */
 @Target(ElementType.TYPE)
 public @interface Table {
