@@ -6,15 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotate Entity with database table name
- * Allows DataRepository to use shortcuts query methods with this entity
+ * Annotate a Entity field with his database column name
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Table {
+public @interface Field {
 
     /**
-     * @return The database table name of the tagged entity
+     * @return The database column name of the tagged field
      */
     String value();
 

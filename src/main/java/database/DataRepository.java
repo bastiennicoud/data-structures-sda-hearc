@@ -1,9 +1,14 @@
 package database;
 
+import Entity.Entity;
+import database.annotations.Field;
+import database.annotations.Table;
 import database.exceptions.HydrationException;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * A class to make call's to the database via shortcuts.
@@ -35,7 +40,8 @@ public class DataRepository {
      * @param <E>         Entity type
      * @return A collection of hydrated Entity
      */
-    public <E> Collection<E> query(String query, Class<E> entityClass) throws SQLException, HydrationException {
+    public <E extends Entity> Collection<E> query(String query, Class<E> entityClass)
+    throws SQLException, HydrationException {
 
         // SQL query execution
         Statement statement = dbConnection.createStatement();
@@ -52,8 +58,20 @@ public class DataRepository {
      * @param entityClass The entity for which you want to retrieve datas
      * @return A collection of the entity type
      */
-    public <E> Collection<E> findAll(Class<E> entityClass) {
+    public <E extends Entity> Collection<E> findAll(Class<E> entityClass) {
 
+        // Generate a select query with parameters annotated on the Entity class
+        String sql = String.format(
+                "SELECT %1$s FROM %2$s",
+                // Get the column name form the Field annotations of the entity fields
+                Arrays.stream(entityClass.getDeclaredFields())
+                      .map(field -> field.getDeclaredAnnotation(Field.class).value())
+                      .collect(Collectors.joining(",")),
+                // Get the table name from the entity Table annotation
+                entityClass.getDeclaredAnnotation(Table.class).value()
+        );
+
+        System.out.println(sql);
 
         return null;
     }

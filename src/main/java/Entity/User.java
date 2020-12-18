@@ -1,5 +1,6 @@
 package Entity;
 
+import database.annotations.Field;
 import database.annotations.Table;
 
 import java.sql.ResultSet;
@@ -8,10 +9,13 @@ import java.sql.SQLException;
 @Table("users")
 public class User extends Entity {
 
+    @Field("user_id")
     public int id;
 
+    @Field("first_name")
     public String first_name;
 
+    @Field("last_name")
     public String last_name;
 
 
