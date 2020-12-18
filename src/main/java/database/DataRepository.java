@@ -2,6 +2,7 @@ package database;
 
 import database.entity.Entity;
 import database.entity.EntityAnnotationReflector;
+import database.entity.EntityHydrator;
 import database.exceptions.HydrationException;
 
 import java.sql.*;

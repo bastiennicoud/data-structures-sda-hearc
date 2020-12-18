@@ -4,7 +4,6 @@ import database.annotations.Field;
 import database.annotations.Table;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**

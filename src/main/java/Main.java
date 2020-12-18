@@ -1,7 +1,7 @@
 import Entity.User;
 import database.DataRepository;
 import database.DatabaseConnexion;
-import database.EntityHydrator;
+import database.entity.EntityHydrator;
 import database.exceptions.HydrationException;
 
 import java.sql.SQLException;

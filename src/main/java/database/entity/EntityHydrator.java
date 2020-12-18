@@ -1,4 +1,4 @@
-package database;
+package database.entity;
 
 import database.exceptions.HydrationException;
 
