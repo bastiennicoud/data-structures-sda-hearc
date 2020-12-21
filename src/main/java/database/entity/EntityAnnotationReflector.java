@@ -46,7 +46,6 @@ public class EntityAnnotationReflector {
                      // Filter the declared fields to keep only Column annotated fields
                      .filter(field -> field.isAnnotationPresent(Column.class));
 
-
     }
 
     /**

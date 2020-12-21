@@ -1,7 +1,6 @@
 import Entity.User;
 import database.DataRepository;
 import database.DatabaseConnexion;
-import database.entity.EntityHydrator;
 import database.exceptions.HydrationException;
 
 import java.sql.SQLException;
@@ -15,10 +14,7 @@ public class Main {
         DatabaseConnexion conn = new DatabaseConnexion();
 
         // Create the repository for future DB call's
-        DataRepository repo = new DataRepository(
-                conn.getDbConnection(),
-                new EntityHydrator()
-        );
+        DataRepository repo = new DataRepository(conn.getDbConnection());
 
         try {
 

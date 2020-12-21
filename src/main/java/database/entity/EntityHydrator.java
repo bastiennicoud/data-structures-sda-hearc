@@ -1,7 +1,10 @@
 package database.entity;
 
+import database.annotations.Column;
 import database.exceptions.HydrationException;
+import database.exceptions.HydrationFieldException;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +16,7 @@ import java.util.Collection;
  */
 public class EntityHydrator {
 
-    public <E extends Entity> Collection<E> hydrate(
+    public static <E extends Entity> Collection<E> hydrate(
             ResultSet results,
             Class<E> entityClass
     ) throws HydrationException {
@@ -51,6 +54,29 @@ public class EntityHydrator {
         }
 
         return datas;
+    }
+
+    /**
+     * Return the value for a specific field with the corresponding type
+     * @return The value of the corresponding column for the field
+     * @throws SQLException Throws if its impossible to get the column ata from the result set
+     * @throws HydrationFieldException Throws if the type is unsupported by the hydrator
+     */
+    public static Object hydrateField(Field field, ResultSet resultSet)
+    throws SQLException, HydrationFieldException {
+
+        // Check the field type to use the correct method to retrieve the column from the result set
+        String columnName = field.getDeclaredAnnotation(Column.class).value();
+
+        // Check the field type to call the correct getter on the result set
+        return switch (field.getType().getName()) {
+            case "int" -> resultSet.getInt(columnName);
+            case "java.lang.String" -> resultSet.getString(columnName);
+            // Throws a exception to indicate that the hydrator dont know hot to hydrate this field type
+            default -> throw new HydrationFieldException(
+                    "Cannot get field, type unsupported by hydrator, custom implementation required"
+            );
+        };
     }
 
 }

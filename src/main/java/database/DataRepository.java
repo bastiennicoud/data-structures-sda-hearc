@@ -19,16 +19,13 @@ import java.util.stream.Collectors;
 public class DataRepository {
 
     private final Connection dbConnection;
-    private final EntityHydrator entityHydrator;
 
     /**
      * @param dbConnection   an active connection to the db
-     * @param entityHydrator Inject an initialised EntityHydrator
      */
-    public DataRepository(Connection dbConnection, EntityHydrator entityHydrator) {
+    public DataRepository(Connection dbConnection) {
 
         this.dbConnection = dbConnection;
-        this.entityHydrator = entityHydrator;
 
     }
 
@@ -46,7 +43,7 @@ public class DataRepository {
         Statement statement = dbConnection.createStatement();
         ResultSet results = statement.executeQuery(query);
 
-        return entityHydrator.hydrate(results, entityClass);
+        return EntityHydrator.hydrate(results, entityClass);
 
     }
 
