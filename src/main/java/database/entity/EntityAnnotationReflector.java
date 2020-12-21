@@ -8,22 +8,14 @@ import java.util.stream.Stream;
 
 /**
  * Provides helpers to get metadata from annotation of an entity
- * @param <E> An entity
+ * TODO: Make static methods for reflection helpers
  */
-public class EntityAnnotationReflector<E extends Entity> {
-
-    private final Class<E> entityClass;
-
-    public EntityAnnotationReflector(Class<E> entityClass) {
-
-        this.entityClass = entityClass;
-
-    }
+public class EntityAnnotationReflector {
 
     /**
      * @return The table name declared in the Table annotation of the entity
      */
-    public String getTableName() {
+    public static <T extends Entity> String getTableName(Class<T> entityClass) {
 
         return entityClass.getDeclaredAnnotation(Table.class).value();
 
@@ -32,7 +24,7 @@ public class EntityAnnotationReflector<E extends Entity> {
     /**
      * @return The columns names declared in the Field annotations of the entity
      */
-    public Stream<String> getColumnsNames() {
+    public static <T extends Entity> Stream<String> getColumnsNames(Class<T> entityClass) {
 
         return Arrays.stream(entityClass.getDeclaredFields())
                      .map(

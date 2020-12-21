@@ -57,15 +57,17 @@ public class DataRepository {
      * @param entityClass The entity for which you want to retrieve datas
      * @return A collection of the entity type
      */
-    public <E extends Entity> Collection<E> findAll(Class<E> entityClass) throws SQLException, HydrationException {
-
-        EntityAnnotationReflector<E> entityReflector = new EntityAnnotationReflector<>(entityClass);
+    public <E extends Entity> Collection<E> findAll(Class<E> entityClass)
+    throws SQLException, HydrationException {
 
         // Generate a select query with parameters annotated on the Entity class
         String sql = String.format(
                 "SELECT %1$s FROM %2$s",
-                entityReflector.getColumnsNames().collect(Collectors.joining(", ")),
-                entityReflector.getTableName()
+                EntityAnnotationReflector
+                        .getColumnsNames(entityClass)
+                        .collect(Collectors.joining(", ")),
+                EntityAnnotationReflector
+                        .getTableName(entityClass)
         );
 
         return query(sql, entityClass);
