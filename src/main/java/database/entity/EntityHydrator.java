@@ -2,7 +2,6 @@ package database.entity;
 
 import database.exceptions.HydrationException;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +13,7 @@ import java.util.Collection;
  */
 public class EntityHydrator {
 
-    public <E> Collection<E> hydrate(
+    public <E extends Entity> Collection<E> hydrate(
             ResultSet results,
             Class<E> entityClass
     ) throws HydrationException {
@@ -23,13 +22,16 @@ public class EntityHydrator {
 
         try {
 
-            // Get the constructor for the corresponding Entity by reflexion
-            Constructor<E> construct = entityClass.getConstructor(ResultSet.class);
-
             // Iterates trough the query results
             while (results.next()) {
                 // Hydrate entities by calling the reflected entity constructor
-                datas.add(construct.newInstance(results));
+                datas.add(
+                        // Get the entity constructor and instantiate a
+                        // new entity with the result set for hydration
+                        EntityAnnotationReflector
+                                .getEntityHydratorConstructor(entityClass)
+                                .newInstance(results)
+                );
             }
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {

@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Field {
+public @interface Column {
 
     /**
      * @return The database column name of the tagged field

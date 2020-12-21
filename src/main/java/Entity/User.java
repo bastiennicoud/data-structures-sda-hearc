@@ -1,6 +1,6 @@
 package Entity;
 
-import database.annotations.Field;
+import database.annotations.Column;
 import database.annotations.Table;
 import database.entity.Entity;
 
@@ -10,26 +10,30 @@ import java.sql.SQLException;
 @Table("users")
 public class User extends Entity {
 
-    @Field("user_id")
+    @Column("user_id")
     public int id;
 
-    @Field("first_name")
-    public String first_name;
+    @Column("first_name")
+    public String firstName;
 
-    @Field("last_name")
-    public String last_name;
+    @Column("last_name")
+    public String lastName;
 
 
     /**
-     * @param id Database id of the user
+     * @param id         Database id of the user
      * @param first_name First Name
-     * @param last_name Last Name
+     * @param last_name  Last Name
      */
-    public User(int id, String first_name, String last_name) {
+    public User(
+            int id,
+            String first_name,
+            String last_name
+    ) {
 
         this.id = id;
-        this.first_name = first_name;
-        this.last_name = last_name;
+        this.firstName = first_name;
+        this.lastName = last_name;
 
     }
 
@@ -38,6 +42,7 @@ public class User extends Entity {
      * @param dbResults Database results from data repository
      * @throws SQLException
      */
+    /*
     public User(ResultSet dbResults) throws SQLException {
 
         this(
@@ -46,5 +51,5 @@ public class User extends Entity {
                 dbResults.getString("last_name")
         );
 
-    }
+    }*/
 }
