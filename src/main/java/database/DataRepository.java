@@ -40,8 +40,8 @@ public class DataRepository {
     throws SQLException, HydrationException {
 
         // SQL query execution
-        Statement statement = dbConnection.createStatement();
-        ResultSet results = statement.executeQuery(query);
+        var statement = dbConnection.createStatement();
+        var results = statement.executeQuery(query);
 
         return EntityHydrator.hydrate(results, entityClass);
 
@@ -58,7 +58,7 @@ public class DataRepository {
     throws SQLException, HydrationException {
 
         // Generate a select query with parameters annotated on the Entity class
-        String sql = String.format(
+        var sql = String.format(
                 "SELECT %1$s FROM %2$s",
                 EntityAnnotationReflector
                         .getColumnsNames(entityClass)

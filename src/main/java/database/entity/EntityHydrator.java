@@ -21,7 +21,7 @@ public class EntityHydrator {
             Class<E> entityClass
     ) throws HydrationException {
 
-        ArrayList<E> datas = new ArrayList<>();
+        var datas = new ArrayList<E>();
 
         try {
 
@@ -66,7 +66,7 @@ public class EntityHydrator {
     throws SQLException, HydrationFieldException {
 
         // Check the field type to use the correct method to retrieve the column from the result set
-        String columnName = field.getDeclaredAnnotation(Column.class).value();
+        var columnName = field.getDeclaredAnnotation(Column.class).value();
 
         // Check the field type to call the correct getter on the result set
         return switch (field.getType().getName()) {
