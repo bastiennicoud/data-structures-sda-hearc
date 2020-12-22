@@ -1,4 +1,4 @@
-package Entity;
+package entities;
 
 import database.annotations.Column;
 import database.annotations.Table;

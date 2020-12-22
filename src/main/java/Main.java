@@ -1,5 +1,4 @@
-import Entity.SearchResult;
-import Entity.User;
+import entities.SearchResult;
 import database.DataRepository;
 import database.DatabaseConnexion;
 import database.exceptions.HydrationException;
@@ -19,10 +18,10 @@ public class Main {
 
         try {
 
-            String[] tokens = {"Uti", "Bas"};
+            String[] tokens = "Utilisateur Bas".split(" ");
             Collection<SearchResult> users = repo.textSearch(SearchResult.class, tokens);
 
-            users.forEach(System.out::println);
+            users.forEach(f -> System.out.println("Type : " + f.type + " Titre : " + f.title));
 
         } catch (SQLException | HydrationException throwables) {
 
