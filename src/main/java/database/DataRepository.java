@@ -1,11 +1,15 @@
 package database;
 
+import database.annotations.Column;
+import database.annotations.Identity;
 import database.entity.Entity;
 import database.entity.EntityAnnotationReflector;
 import database.entity.EntityHydrator;
 import database.exceptions.HydrationException;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -22,7 +26,7 @@ public class DataRepository {
     private final Connection dbConnection;
 
     /**
-     * @param dbConnection   an active connection to the db
+     * @param dbConnection an active connection to the db
      */
     public DataRepository(Connection dbConnection) {
 
@@ -37,13 +41,15 @@ public class DataRepository {
      * @param <E>         Entity type
      * @return A collection of hydrated Entity
      */
-    public <E extends Entity> Collection<E> query(String query, Class<E> entityClass)
+    public <E extends Entity> ArrayList<E> query(String query, Class<E> entityClass)
     throws SQLException, HydrationException {
 
         // SQL query execution
         var statement = dbConnection.createStatement();
         var results = statement.executeQuery(query);
 
+        dbConnection.beginRequest();
+        dbConnection.endRequest();
         return EntityHydrator.hydrate(results, entityClass);
 
     }
@@ -72,11 +78,69 @@ public class DataRepository {
 
     }
 
+    public <E extends Entity> E findById(Class<E> entityClass, int id)
+    throws SQLException, HydrationException {
+
+        var sql = String.format(
+                "SELECT %1$s FROM %2$s WHERE %3$s = %4$s",
+                EntityAnnotationReflector
+                        .getColumnsNames(entityClass)
+                        .collect(Collectors.joining(", ")),
+                EntityAnnotationReflector
+                        .getTableName(entityClass),
+                "id_column",
+                id
+        );
+
+        return query(sql, entityClass).get(0);
+    }
+
+    public <E extends Entity> E insertNew(E entity)
+    throws SQLException, HydrationException {
+        // FIXME: manage transaction and retrurn hydrated entity
+
+        var sql = String.format(
+                "INSERT INTO %1$s (%2$s) VALUES (%3$s); ",
+                EntityAnnotationReflector
+                        .getTableName(entity.getClass()),
+
+                EntityAnnotationReflector
+                        .getColumnAnnotatedFields(entity.getClass())
+                        .filter(field -> !field.isAnnotationPresent(Identity.class))
+                        .map(field -> field.getDeclaredAnnotation(Column.class).value())
+                        .collect(Collectors.joining(", ")),
+
+                EntityAnnotationReflector
+                        .getColumnAnnotatedFields(entity.getClass())
+                        .filter(field -> !field.isAnnotationPresent(Identity.class))
+                        .map(field -> {
+                            // FIXME : Catch correctly the exception
+                            try {
+                                return "'" + field.get(entity).toString() + "'";
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        })
+                        .collect(Collectors.joining(", "))
+        );
+
+        query(sql, entity.getClass());
+
+        return entity;
+    }
+
+    public <E extends Entity> E updateById(E entity, int id) {
+
+        return entity;
+    }
+
     /**
      * Create a search query using the sqlite FTS5 MATCH operator
      * You can only use this query generator with entity that represent a virtual table with FTS5
+     *
      * @param entityClass The entity you wish to hydrate with the results of the query
-     * @param tokens All the tokens you want to search
+     * @param tokens      All the tokens you want to search
      */
     public <E extends Entity> Collection<E> textSearch(Class<E> entityClass, String[] tokens)
     throws SQLException, HydrationException {

@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 public class EntityHydrator {
 
-    public static <E extends Entity> Collection<E> hydrate(
+    public static <E extends Entity> ArrayList<E> hydrate(
             ResultSet results,
             Class<E> entityClass
     ) throws HydrationException {

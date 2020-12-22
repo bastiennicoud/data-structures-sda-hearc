@@ -1,13 +1,16 @@
 package database.entity;
 
 import database.annotations.Column;
+import database.annotations.Identity;
 import database.annotations.Searchable;
 import database.annotations.Table;
+import database.exceptions.NoMatchingEntityAnnotation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -59,6 +62,25 @@ public class EntityAnnotationReflector {
                         field -> field.getDeclaredAnnotation(Column.class)
                                       .value()
                 );
+
+    }
+
+    /**
+     * @return The columns names declared in the Field annotations of the entity fields
+     */
+    public static <T extends Entity> String getIdentityColumnName(Class<T> entityClass) throws Exception {
+
+        Optional<Field> identityField = getColumnAnnotatedFields(entityClass)
+                .filter(field -> field.isAnnotationPresent(Identity.class))
+                // Get the first element of the stream
+                .findFirst();
+
+        // Check if there is a identity field retrieved by the find first
+        if (identityField.isPresent())
+            return identityField.get().getDeclaredAnnotation(Column.class).value();
+
+        // If theres no field with @identity throw
+        throw new NoMatchingEntityAnnotation("This entity does not contain a field identified with @Identity");
 
     }
 

@@ -1,9 +1,10 @@
 -- users table
 -- -----------------
-CREATE TABLE users (
-    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE users
+(
+    user_id    INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL
+    last_name  TEXT NOT NULL
 );
 
 -- Index on users names
@@ -20,9 +21,11 @@ CREATE VIRTUAL TABLE full_text_search_index
                   tokenize="trigram"
 );
 
+INSERT INTO users (first_name, last_name) VALUES ('bastien', 'thiubault');
+
 SELECT *
 FROM full_text_search_index
-WHERE title MATCH 'test'
+WHERE title MATCH '"test" *'
 ORDER BY rank;
 
 INSERT INTO full_text_search_index
