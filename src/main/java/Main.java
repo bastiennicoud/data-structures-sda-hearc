@@ -1,3 +1,4 @@
+import Entity.SearchResult;
 import Entity.User;
 import database.DataRepository;
 import database.DatabaseConnexion;
@@ -18,7 +19,8 @@ public class Main {
 
         try {
 
-            Collection<User> users = repo.findAll(User.class);
+            String[] tokens = {"Uti", "Bas"};
+            Collection<SearchResult> users = repo.textSearch(SearchResult.class, tokens);
 
             users.forEach(System.out::println);
 

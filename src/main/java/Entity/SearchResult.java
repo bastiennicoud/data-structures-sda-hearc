@@ -1,6 +1,7 @@
 package Entity;
 
 import database.annotations.Column;
+import database.annotations.Searchable;
 import database.annotations.Table;
 import database.entity.Entity;
 
@@ -15,6 +16,7 @@ public class SearchResult extends Entity {
     /**
      * The human readable type of the search result (Utilisateur, Cours...)
      */
+    @Searchable
     @Column("type")
     public String type;
 
@@ -22,6 +24,7 @@ public class SearchResult extends Entity {
      * The title of the resource represented by
      * the search result (username, lesson name)
      */
+    @Searchable
     @Column("title")
     public String title;
 
@@ -29,6 +32,7 @@ public class SearchResult extends Entity {
      * The description of the resource represented by the search result.
      * Possibly not present.
      */
+    @Searchable
     @Column("description")
     public String description;
 

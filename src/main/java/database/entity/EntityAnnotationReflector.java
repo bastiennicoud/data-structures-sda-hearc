@@ -1,6 +1,7 @@
 package database.entity;
 
 import database.annotations.Column;
+import database.annotations.Searchable;
 import database.annotations.Table;
 
 import java.lang.reflect.Constructor;
@@ -24,11 +25,22 @@ public class EntityAnnotationReflector {
     }
 
     /**
+     * @return Get the fields of the entity annotated with de Column annotation
+     */
+    public static <T extends Entity> Stream<Field> getColumnAnnotatedFields(Class<T> entityClass) {
+
+        return Arrays.stream(entityClass.getDeclaredFields())
+                     // Filter the declared fields to keep only Column annotated fields
+                     .filter(field -> field.isAnnotationPresent(Column.class));
+
+    }
+
+    /**
      * @return The columns names declared in the Field annotations of the entity fields
      */
     public static <T extends Entity> Stream<String> getColumnsNames(Class<T> entityClass) {
 
-        return Arrays.stream(entityClass.getDeclaredFields())
+        return getColumnAnnotatedFields(entityClass)
                      .map(
                              field -> field.getDeclaredAnnotation(Column.class)
                                            .value()
@@ -39,11 +51,14 @@ public class EntityAnnotationReflector {
     /**
      * @return The columns names declared in the Field annotations of the entity fields
      */
-    public static <T extends Entity> Stream<Field> getColumnAnnotatedFields(Class<T> entityClass) {
+    public static <T extends Entity> Stream<String> getSearchableColumnsNames(Class<T> entityClass) {
 
-        return Arrays.stream(entityClass.getDeclaredFields())
-                     // Filter the declared fields to keep only Column annotated fields
-                     .filter(field -> field.isAnnotationPresent(Column.class));
+        return getColumnAnnotatedFields(entityClass)
+                .filter(field -> field.isAnnotationPresent(Searchable.class))
+                .map(
+                        field -> field.getDeclaredAnnotation(Column.class)
+                                      .value()
+                );
 
     }
 
