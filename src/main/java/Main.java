@@ -10,7 +10,7 @@ import java.util.Collection;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, HydrationException {
 
         // initialize a connexion to the DB
         DatabaseConnexion conn = new DatabaseConnexion();
