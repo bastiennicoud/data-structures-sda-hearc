@@ -24,14 +24,17 @@ public interface Reflector<T> {
     }
 
     /**
+     * Intermediate operation.
      * Register that the tested class must be annotated with the specified annotation type
+     *
      * @param annotationType The Class that models the annotation, ex MyAnnotation.class
-     * @param <A> The annotation type
+     * @param <A>            The annotation type
      * @return The current reflector for fluent chaining
      */
     <A extends Annotation> Reflector<T> is(Class<A> annotationType);
 
     /**
+     * Intermediate operation.
      * Register that the tested class must be annotated with the specified annotation type
      * @param annotationType The Class that models the annotation, ex MyAnnotation.class
      * @param <A> The annotation type
@@ -40,6 +43,7 @@ public interface Reflector<T> {
     <A extends Annotation> Reflector<T> not(Class<A> annotationType);
 
     /**
+     * Terminal operation
      * Return an optional of the parameter annotation type value
      */
     <A extends Annotation> Optional<String> value(Class<A> annotationType)

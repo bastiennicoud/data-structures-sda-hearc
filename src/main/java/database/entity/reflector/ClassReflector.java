@@ -4,6 +4,8 @@ import database.entity.reflector.exceptions.DisallowedAnnotationException;
 import database.entity.reflector.exceptions.MissingAnnotationException;
 import database.entity.reflector.exceptions.RequiredAnnotationException;
 
+import java.lang.annotation.Annotation;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -11,28 +13,61 @@ import java.util.Optional;
  */
 public class ClassReflector<T> implements Reflector<T> {
 
+    // Class representation of the type that parameterize the Reflector
     private final Class<T> typeClass;
+
+    // Predicate chain of tests we want to perform on the typeClass
+    private ChainedBooleanSupplier predicateChain;
 
     protected ClassReflector(Class<T> typeClass) {
 
         this.typeClass = typeClass;
     }
 
-    @Override
-    public Reflector is(Class annotationType) {
+    private void chainPredicate(ChainedBooleanSupplier test) {
 
-        return null;
+        if (predicateChain == null) {
+            predicateChain = test;
+        } else {
+            predicateChain = predicateChain.and(test);
+        }
+    }
+
+    private boolean performPredicateChain() {
+
+        return predicateChain.getAsBoolean();
     }
 
     @Override
-    public Reflector not(Class annotationType) {
+    public <A extends Annotation> Reflector<T> is(Class<A> annotationType) {
 
-        return null;
+        Objects.requireNonNull(annotationType);
+        chainPredicate(() -> typeClass.isAnnotationPresent(annotationType));
+
+        return this;
     }
 
     @Override
-    public Optional<String> value(Class annotationType)
+    public <A extends Annotation> Reflector<T> not(Class<A> annotationType) {
+
+        Objects.requireNonNull(annotationType);
+        chainPredicate(() -> !typeClass.isAnnotationPresent(annotationType));
+
+        return this;
+    }
+
+    @Override
+    public <A extends Annotation> Optional<String> value(Class<A> annotationType)
     throws RequiredAnnotationException, DisallowedAnnotationException, MissingAnnotationException {
+
+        if (!typeClass.isAnnotationPresent(annotationType)) {
+            throw new MissingAnnotationException();
+        }
+
+        if (performPredicateChain()) {
+            return typeClass.getDeclaredAnnotation(annotationType)
+        }
+
 
         return Optional.empty();
     }
