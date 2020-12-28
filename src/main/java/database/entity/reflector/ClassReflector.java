@@ -2,7 +2,6 @@ package database.entity.reflector;
 
 import database.entity.reflector.exceptions.DisallowedAnnotationException;
 import database.entity.reflector.exceptions.MissingAnnotationException;
-import database.entity.reflector.exceptions.RequiredAnnotationException;
 
 import java.lang.annotation.Annotation;
 import java.util.Objects;
@@ -35,7 +34,10 @@ public class ClassReflector<T> implements Reflector<T> {
 
     private boolean performPredicateChain() {
 
-        return predicateChain.getAsBoolean();
+        if (predicateChain != null) {
+            return predicateChain.getAsBoolean();
+        }
+        return true;
     }
 
     @Override
@@ -57,19 +59,18 @@ public class ClassReflector<T> implements Reflector<T> {
     }
 
     @Override
-    public <A extends Annotation> Optional<String> value(Class<A> annotationType)
-    throws RequiredAnnotationException, DisallowedAnnotationException, MissingAnnotationException {
+    public <A extends Annotation> Optional<A> value(Class<A> annotationType)
+    throws DisallowedAnnotationException, MissingAnnotationException {
 
         if (!typeClass.isAnnotationPresent(annotationType)) {
             throw new MissingAnnotationException();
         }
 
         if (performPredicateChain()) {
-            return typeClass.getDeclaredAnnotation(annotationType)
+            return Optional.ofNullable(typeClass.getDeclaredAnnotation(annotationType));
+        } else {
+            throw new DisallowedAnnotationException();
         }
-
-
-        return Optional.empty();
     }
 
 }

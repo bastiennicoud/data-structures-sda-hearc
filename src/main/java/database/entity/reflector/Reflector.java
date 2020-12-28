@@ -2,7 +2,6 @@ package database.entity.reflector;
 
 import database.entity.reflector.exceptions.DisallowedAnnotationException;
 import database.entity.reflector.exceptions.MissingAnnotationException;
-import database.entity.reflector.exceptions.RequiredAnnotationException;
 
 import java.lang.annotation.Annotation;
 import java.util.Objects;
@@ -46,6 +45,6 @@ public interface Reflector<T> {
      * Terminal operation
      * Return an optional of the parameter annotation type value
      */
-    <A extends Annotation> Optional<String> value(Class<A> annotationType)
-    throws RequiredAnnotationException, DisallowedAnnotationException, MissingAnnotationException;
+    <A extends Annotation> Optional<A> value(Class<A> annotationType)
+    throws DisallowedAnnotationException, MissingAnnotationException;
 }
