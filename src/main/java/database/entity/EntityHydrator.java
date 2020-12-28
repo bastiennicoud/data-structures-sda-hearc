@@ -1,6 +1,6 @@
 package database.entity;
 
-import database.annotations.Column;
+import database.entity.annotations.Column;
 import database.exceptions.HydrationException;
 import database.exceptions.HydrationFieldException;
 
@@ -9,7 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Provides methods to hydrate Entities from SQL tuples using reflected entities annotations.

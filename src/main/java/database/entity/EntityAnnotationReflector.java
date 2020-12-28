@@ -1,9 +1,10 @@
 package database.entity;
 
-import database.annotations.Column;
-import database.annotations.Identity;
-import database.annotations.Searchable;
-import database.annotations.Table;
+import database.entity.annotations.Column;
+import database.entity.annotations.Identity;
+import database.entity.annotations.Searchable;
+import database.entity.annotations.Table;
+import database.entity.reflector.Reflector;
 import database.exceptions.NoMatchingEntityAnnotation;
 
 import java.lang.reflect.Constructor;
@@ -23,6 +24,7 @@ public class EntityAnnotationReflector {
      */
     public static <T extends Entity> String getTableName(Class<T> entityClass) {
 
+        Reflector.of(entityClass).is(Table.class).not(Searchable.class).value(Table.class);
         return entityClass.getDeclaredAnnotation(Table.class).value();
 
     }

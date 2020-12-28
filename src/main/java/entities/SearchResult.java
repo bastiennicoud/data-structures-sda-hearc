@@ -1,8 +1,8 @@
 package entities;
 
-import database.annotations.Column;
-import database.annotations.Searchable;
-import database.annotations.Table;
+import database.entity.annotations.Column;
+import database.entity.annotations.Searchable;
+import database.entity.annotations.Table;
 import database.entity.Entity;
 
 import java.sql.ResultSet;

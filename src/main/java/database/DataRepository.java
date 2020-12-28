@@ -1,7 +1,7 @@
 package database;
 
-import database.annotations.Column;
-import database.annotations.Identity;
+import database.entity.annotations.Column;
+import database.entity.annotations.Identity;
 import database.entity.Entity;
 import database.entity.EntityAnnotationReflector;
 import database.entity.EntityHydrator;
