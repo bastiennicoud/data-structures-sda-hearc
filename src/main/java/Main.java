@@ -1,12 +1,10 @@
 import com.github.javafaker.Faker;
-import entities.SearchResult;
 import database.DataRepository;
 import database.DatabaseConnexion;
 import database.exceptions.HydrationException;
 import entities.User;
 
 import java.sql.SQLException;
-import java.util.Collection;
 
 public class Main {
 
