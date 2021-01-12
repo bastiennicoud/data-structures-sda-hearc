@@ -23,6 +23,29 @@ const performSearch = async function (needle) {
 
         console.log("Search results : ", data)
 
+        // Display search results
+        let searchBox = document.querySelector('#search_results')
+
+        let searchResultsHtml = ``
+
+        for (let e of data) {
+            console.log(e)
+            searchResultsHtml += `
+            <div class="result_item">
+                <div class="result_title">
+                    <p>${e.title}</p>
+                </div>
+                <div class="result_type">
+                    <div><p>${e.type}</p></div>
+                </div>
+                <div class="result_content">
+                    <p>${e.description}</p>
+                </div>
+            </div>
+            `
+        }
+        searchBox.innerHTML = searchResultsHtml
+
     } catch (e) {
 
         console.error("Impossible to perform the search", e)

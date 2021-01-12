@@ -43,8 +43,6 @@ public class SearchHandler implements HttpHandler {
                     body
             );
 
-            System.out.println(search.get("needle").asText());
-
             var results = dataRepository.textSearch(
                     SearchResult.class,
                     search.get("needle").asText().split(" ")
