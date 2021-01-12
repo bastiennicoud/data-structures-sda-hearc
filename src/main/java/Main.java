@@ -40,34 +40,6 @@ public class Main {
         );
         System.out.println("You can stop the server with ctrl+c");
 
-//        try {
-//
-//            String[] tokens = "Bas".split(" ");
-//            Collection<SearchResult> users = repo.textSearch(SearchResult.class, tokens);
-//
-//            users.forEach(f -> System.out.println("Type : " + f.type + " Titre : " + f.title));
-//
-//            User baba = repo.findById(User.class, 4);
-//            System.out.println(baba.firstName);
-
-
-//        Faker faker = new Faker();
-//        int i = 0;
-//        while (i <= 100) {
-//            User usr = new User(
-//                    faker.name().firstName(),
-//                    faker.name().lastName()
-//            );
-//            usr = repo.insertNew(usr);
-//            i++;
-//        }
-
-//        } catch (SQLException | HydrationException throwables) {
-//
-//            throwables.printStackTrace();
-//
-//        }
-
     }
 
 }
