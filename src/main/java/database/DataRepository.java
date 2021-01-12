@@ -1,10 +1,10 @@
 package database;
 
-import database.entity.annotations.Column;
-import database.entity.annotations.Identity;
 import database.entity.Entity;
 import database.entity.EntityAnnotationReflector;
 import database.entity.EntityHydrator;
+import database.entity.annotations.Column;
+import database.entity.annotations.Identity;
 import database.exceptions.HydrationException;
 
 import java.sql.Connection;
@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -142,7 +143,7 @@ public class DataRepository {
      * @param entityClass The entity you wish to hydrate with the results of the query
      * @param tokens      All the tokens you want to search
      */
-    public <E extends Entity> Collection<E> textSearch(Class<E> entityClass, String[] tokens)
+    public <E extends Entity> List<E> textSearch(Class<E> entityClass, String[] tokens)
     throws SQLException, HydrationException {
 
         var sql = String.format(

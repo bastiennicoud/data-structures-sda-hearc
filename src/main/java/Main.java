@@ -1,12 +1,13 @@
 import com.sun.net.httpserver.HttpServer;
-import database.exceptions.HydrationException;
+import database.DataRepository;
+import database.DatabaseConnexion;
 import http.HomePageHandler;
+import http.ScriptHandler;
 import http.SearchHandler;
 import http.StyleSheetHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.sql.SQLException;
 
 public class Main {
 
@@ -14,7 +15,13 @@ public class Main {
 
     static final int PORT = 8080;
 
-    public static void main(String[] args) throws SQLException, HydrationException, IOException {
+    public static void main(String[] args) throws IOException {
+
+        // initialize a connexion to the DB
+        DatabaseConnexion conn = new DatabaseConnexion();
+
+        // Create the repository for future DB call's
+        DataRepository repo = new DataRepository(conn.getDbConnection());
 
         // Tes simple web server for edulearn search bar
         // We dont pass a executor to the server becose we will not use threaded request handling
@@ -22,7 +29,8 @@ public class Main {
         // Register handlers
         server.createContext("/", new HomePageHandler());
         server.createContext("/stylesheet", new StyleSheetHandler());
-        server.createContext("/search", new SearchHandler());
+        server.createContext("/javascript", new ScriptHandler());
+        server.createContext("/search", new SearchHandler(repo));
         server.start();
 
         System.out.printf(
@@ -32,14 +40,8 @@ public class Main {
         );
         System.out.println("You can stop the server with ctrl+c");
 
-        // initialize a connexion to the DB
-        //DatabaseConnexion conn = new DatabaseConnexion();
-
-        // Create the repository for future DB call's
-        // DataRepository repo = new DataRepository(conn.getDbConnection());
-
-        //try {
-
+//        try {
+//
 //            String[] tokens = "Bas".split(" ");
 //            Collection<SearchResult> users = repo.textSearch(SearchResult.class, tokens);
 //
@@ -65,8 +67,6 @@ public class Main {
 //            throwables.printStackTrace();
 //
 //        }
-
-        //conn.closeConnexion();
 
     }
 
