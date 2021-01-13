@@ -1,6 +1,6 @@
 import com.sun.net.httpserver.HttpServer;
 import database.DataRepository;
-import database.DatabaseConnexion;
+import database.DatabaseConnection;
 import http.HomePageHandler;
 import http.ScriptHandler;
 import http.SearchHandler;
@@ -29,9 +29,13 @@ public class Main {
 
         System.out.println("Starting EduLearn !");
 
-        // Try to initialize the database connexion
-        // (The try with ressources will automatically close the connexion when the program quit the block
-        try (DatabaseConnexion conn = new DatabaseConnexion()) {
+        // Try to initialize the database connexion and the http server
+        try {
+
+            // Initialize database connection
+            // The connection is not closed here because whe want to reuse it for
+            // each http request
+            DatabaseConnection conn = new DatabaseConnection();
 
             // Create the repository for future DB call's
             DataRepository repo = new DataRepository(conn.getDbConnection());

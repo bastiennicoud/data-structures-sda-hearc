@@ -1,3 +1,5 @@
+PRAGMA encoding = 'UTF-8';
+
 -- users table
 -- -----------------
 CREATE TABLE users

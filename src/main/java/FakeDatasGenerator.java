@@ -1,6 +1,6 @@
 import com.github.javafaker.Faker;
 import database.DataRepository;
-import database.DatabaseConnexion;
+import database.DatabaseConnection;
 import database.exceptions.HydrationException;
 import entities.User;
 
@@ -11,7 +11,7 @@ public class FakeDatasGenerator {
     public static void main(String[] args) throws SQLException, HydrationException {
 
         // initialize a connexion to the DB
-        DatabaseConnexion conn = new DatabaseConnexion();
+        DatabaseConnection conn = new DatabaseConnection();
 
         // Create the repository for future DB call's
         DataRepository repo = new DataRepository(conn.getDbConnection());
