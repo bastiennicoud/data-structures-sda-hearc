@@ -48,15 +48,16 @@ public class SearchHandler implements HttpHandler {
                     search.get("needle").asText().split(" ")
             );
 
-            var searchResponse = mapper.writeValueAsString(results);
+            var searchResponse = mapper.writeValueAsString(results)
+                                       .getBytes(StandardCharsets.UTF_8);
 
             var responseHeaders = exchange.getResponseHeaders();
             responseHeaders.set("Content-Type", "text/json; charset=UTF-8");
 
-            exchange.sendResponseHeaders(200, searchResponse.length());
+            exchange.sendResponseHeaders(200, searchResponse.length);
 
             try (OutputStream os = exchange.getResponseBody()) {
-                os.write(searchResponse.getBytes(StandardCharsets.UTF_8));
+                os.write(searchResponse);
             }
 
         } catch (SQLException | HydrationException throwables) {
