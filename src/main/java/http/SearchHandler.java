@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import database.DataRepository;
 import database.exceptions.HydrationException;
+import database.exceptions.SqlQueryFormattingException;
 import entities.SearchResult;
 
 import java.io.BufferedReader;
@@ -81,7 +82,7 @@ public class SearchHandler extends HttpHandler {
                 os.write(searchResponse);
             }
 
-        } catch (SQLException | HydrationException e) {
+        } catch (SQLException | HydrationException | SqlQueryFormattingException e) {
 
             sendHttpError(
                     exchange,

@@ -3,6 +3,7 @@ package database;
 import database.entity.Entity;
 import database.entity.EntityHydrator;
 import database.exceptions.HydrationException;
+import database.exceptions.SqlQueryFormattingException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -65,6 +66,21 @@ public class BaseRepository {
         // SQL query execution
         try (var statement = dbConnection.createStatement()) {
             return statement.executeUpdate(query);
+        }
+
+    }
+
+    protected String formatSqlQuery(String queryFormat, Object... args) throws SqlQueryFormattingException {
+
+        try {
+            return String.format(queryFormat, args);
+        } catch (Exception e) {
+            System.out.println("Error while trying to format the sql query :");
+            System.out.println("Provided query format :" + queryFormat);
+            System.out.println("Provided query arguments :" + args);
+            e.printStackTrace();
+
+            throw new SqlQueryFormattingException();
         }
 
     }

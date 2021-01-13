@@ -1,7 +1,7 @@
 import com.github.javafaker.Faker;
 import database.DataRepository;
 import database.DatabaseConnection;
-import database.exceptions.HydrationException;
+import database.exceptions.SqlQueryFormattingException;
 import entities.User;
 
 import java.sql.SQLException;
@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class FakeDatasGenerator {
 
     public static void main(String[] args)
-    throws SQLException, HydrationException, NoSuchFieldException, IllegalAccessException {
+    throws SQLException, SqlQueryFormattingException {
 
         // initialize a connexion to the DB
         DatabaseConnection conn = new DatabaseConnection();

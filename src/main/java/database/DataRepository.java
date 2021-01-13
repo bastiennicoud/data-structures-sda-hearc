@@ -6,6 +6,7 @@ import database.entity.annotations.Identity;
 import database.entity.annotations.Table;
 import database.entity.reflector.Reflector;
 import database.exceptions.HydrationException;
+import database.exceptions.SqlQueryFormattingException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -35,10 +36,10 @@ public class DataRepository extends BaseRepository {
      * @return A collection of the entity type
      */
     public <E extends Entity> Collection<E> findAll(Class<E> entityClass)
-    throws SQLException, HydrationException {
+    throws SQLException, HydrationException, SqlQueryFormattingException {
 
         // Generate a select query with parameters annotated on the Entity class
-        var sql = String.format(
+        var query = formatSqlQuery(
                 // Query template
                 "SELECT %1$s FROM %2$s",
                 // Get the columns names
@@ -52,16 +53,14 @@ public class DataRepository extends BaseRepository {
                          .orElseThrow()
         );
 
-        System.out.println(sql);
-
-        return query(sql, entityClass);
+        return query(query, entityClass);
 
     }
 
     public <E extends Entity> E findById(Class<E> entityClass, int id)
-    throws Exception {
+    throws SqlQueryFormattingException, SQLException, HydrationException {
 
-        var sql = String.format(
+        var query = formatSqlQuery(
                 "SELECT %1$s FROM %2$s WHERE %3$s = %4$s",
                 // Get the columns names
                 Reflector.of(entityClass)
@@ -82,15 +81,13 @@ public class DataRepository extends BaseRepository {
                 id
         );
 
-        System.out.println(sql);
-
-        return query(sql, entityClass).get(0);
+        return query(query, entityClass).get(0);
     }
 
     public <E extends Entity> int insertNew(E entity)
-    throws SQLException {
+    throws SQLException, SqlQueryFormattingException {
 
-        var sql = String.format(
+        var query = formatSqlQuery(
                 "INSERT INTO %1$s (%2$s) VALUES (%3$s); ",
 
                 // Get the table name
@@ -114,9 +111,7 @@ public class DataRepository extends BaseRepository {
                          .collect(Collectors.joining(", "))
         );
 
-        System.out.println(sql);
-
-        return execute(sql);
+        return execute(query);
     }
 
     /**
@@ -127,41 +122,32 @@ public class DataRepository extends BaseRepository {
      * @param tokens      All the tokens you want to search
      */
     public <E extends Entity> List<E> textSearch(Class<E> entityClass, String[] tokens)
-    throws SQLException, HydrationException {
+    throws SQLException, HydrationException, SqlQueryFormattingException {
 
-        String sql = "";
-        try {
-            sql = String.format(
-                    "SELECT %1$s FROM %2$s WHERE %3$s MATCH '%4$s' ORDER BY rank",
-                    // Fill the list of columns to retrieve
-                    Reflector.of(entityClass)
-                             .names(Column.class)
-                             .collect(Collectors.joining(", "))
-                    ,
-                    // Fill the table
-                    Reflector.of(entityClass)
-                             .getClassAnnotationValue(Table.class)
-                             .orElseThrow()
-                    ,
-                    // Fill where you want to search
-                    Reflector.of(entityClass)
-                             .getClassAnnotationValue(Table.class)
-                             .orElseThrow()
-                    ,
-                    // The FTS5 match query string
-                    Arrays.stream(tokens)
-                          .map(t -> String.format("\" %1$s \" *", t))
-                          .collect(Collectors.joining(" "))
-            );
-        } catch (Exception e) {
-            System.out.println("Error generating the sql query");
-            e.printStackTrace();
-        }
+        var query = formatSqlQuery(
+                "SELECT %1$s FROM %2$s WHERE %3$s MATCH '%4$s' ORDER BY rank",
+                // Fill the list of columns to retrieve
+                Reflector.of(entityClass)
+                         .names(Column.class)
+                         .collect(Collectors.joining(", "))
+                ,
+                // Fill the table
+                Reflector.of(entityClass)
+                         .getClassAnnotationValue(Table.class)
+                         .orElseThrow()
+                ,
+                // Fill where you want to search
+                Reflector.of(entityClass)
+                         .getClassAnnotationValue(Table.class)
+                         .orElseThrow()
+                ,
+                // The FTS5 match query string
+                Arrays.stream(tokens)
+                      .map(t -> String.format("\" %1$s \" *", t))
+                      .collect(Collectors.joining(" "))
+        );
 
-
-        System.out.println(sql);
-
-        return query(sql, entityClass);
+        return query(query, entityClass);
     }
 
 }
