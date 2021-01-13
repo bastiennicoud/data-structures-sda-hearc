@@ -1,14 +1,13 @@
 package http;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-public class ScriptHandler implements HttpHandler {
+public class ScriptHandler extends HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
