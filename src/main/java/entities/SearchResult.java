@@ -1,9 +1,9 @@
 package entities;
 
+import database.entity.Entity;
 import database.entity.annotations.Column;
 import database.entity.annotations.Searchable;
 import database.entity.annotations.Table;
-import database.entity.Entity;
 
 import java.sql.ResultSet;
 
@@ -46,7 +46,7 @@ public class SearchResult extends Entity {
      * The id of the resource represented by the search result
      */
     @Column("resource_id")
-    public String resourceId;
+    public int resourceId;
 
     public SearchResult(ResultSet dbResults) {
 

@@ -70,6 +70,15 @@ public class EntityHydrator {
         return switch (field.getType().getName()) {
             case "int" -> resultSet.getInt(columnName);
             case "java.lang.String" -> resultSet.getString(columnName);
+            case "long" -> resultSet.getLong(columnName);
+            case "short" -> resultSet.getShort(columnName);
+            case "boolean" -> resultSet.getBoolean(columnName);
+            case "byte" -> resultSet.getByte(columnName);
+            case "float" -> resultSet.getFloat(columnName);
+            case "java.math.BigDecimal" -> resultSet.getBigDecimal(columnName);
+            case "java.sql.Date" -> resultSet.getDate(columnName);
+            case "java.sql.Time" -> resultSet.getTime(columnName);
+            case "java.sql.Timestamp" -> resultSet.getTimestamp(columnName);
             // Throws a exception to indicate that the hydrator dont know hot to hydrate this field type
             default -> throw new HydrationFieldException(
                     "Cannot get field, type unsupported by hydrator, custom implementation required"
