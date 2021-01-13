@@ -50,7 +50,10 @@ public class SearchHandler extends HttpHandler {
             var body = bfReader.lines()
                                .collect(Collectors.joining());
 
-            System.out.println("Request body : " + body);
+            System.out.printf(
+                    "Request body %1$s",
+                    body
+            );
 
             // Parse the json paylod
             var search = mapper.readTree(
@@ -61,11 +64,6 @@ public class SearchHandler extends HttpHandler {
             var results = dataRepository.textSearch(
                     SearchResult.class,
                     search.get("needle").asText().split(" ")
-            );
-
-            System.out.printf(
-                    "Request body %1$s",
-                    results.stream().map(r -> r.title + r.description).collect(Collectors.joining())
             );
 
             // serialise the search results

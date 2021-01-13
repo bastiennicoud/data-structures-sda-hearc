@@ -2,14 +2,12 @@ package database;
 
 import database.entity.Entity;
 import database.entity.EntityAnnotationReflector;
-import database.entity.EntityHydrator;
 import database.entity.annotations.Column;
 import database.entity.annotations.Identity;
 import database.exceptions.HydrationException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -20,39 +18,16 @@ import java.util.stream.Collectors;
  * Automatically hydrate Entities via reflected attributes.
  * Does not provide verification between SQL returned tuples and entities.
  * You need to provide a SQL query that return the right datas for the matching Entity.
- * Otherwise risk encountering data inconstancy or hydration errors.
+ * Otherwise you risk encountering data inconstancy or hydration errors.
  */
-public class DataRepository {
-
-    private final Connection dbConnection;
+public class DataRepository extends BaseRepository {
 
     /**
      * @param dbConnection an active connection to the db
      */
     public DataRepository(Connection dbConnection) {
 
-        this.dbConnection = dbConnection;
-
-    }
-
-    /**
-     * @param query       The query statement you want to execute
-     * @param entityClass The class you want to hydrate with the query results,
-     *                    the query must be compatible with the Entity hydrate method
-     * @param <E>         Entity type
-     * @return A collection of hydrated Entity
-     */
-    public <E extends Entity> ArrayList<E> query(String query, Class<E> entityClass)
-    throws SQLException, HydrationException {
-
-        // SQL query execution
-        var statement = dbConnection.createStatement();
-        var results = statement.executeQuery(query);
-
-        dbConnection.beginRequest();
-        dbConnection.endRequest();
-        return EntityHydrator.hydrate(results, entityClass);
-
+        super(dbConnection);
     }
 
     /**
