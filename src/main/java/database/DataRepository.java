@@ -4,6 +4,8 @@ import database.entity.Entity;
 import database.entity.EntityAnnotationReflector;
 import database.entity.annotations.Column;
 import database.entity.annotations.Identity;
+import database.entity.annotations.Table;
+import database.entity.reflector.Reflector;
 import database.exceptions.HydrationException;
 
 import java.sql.Connection;
@@ -14,11 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A class to make call's to the database via shortcuts.
- * Automatically hydrate Entities via reflected attributes.
- * Does not provide verification between SQL returned tuples and entities.
- * You need to provide a SQL query that return the right datas for the matching Entity.
- * Otherwise you risk encountering data inconstancy or hydration errors.
+ * Add specific requests query bulders to BaseRepository
  */
 public class DataRepository extends BaseRepository {
 
@@ -55,7 +53,7 @@ public class DataRepository extends BaseRepository {
     }
 
     public <E extends Entity> E findById(Class<E> entityClass, int id)
-    throws SQLException, HydrationException {
+    throws Exception {
 
         var sql = String.format(
                 "SELECT %1$s FROM %2$s WHERE %3$s = %4$s",
@@ -64,51 +62,42 @@ public class DataRepository extends BaseRepository {
                         .collect(Collectors.joining(", ")),
                 EntityAnnotationReflector
                         .getTableName(entityClass),
-                "id_column",
+                EntityAnnotationReflector
+                        .getIdentityColumnName(entityClass),
                 id
         );
 
         return query(sql, entityClass).get(0);
     }
 
-    public <E extends Entity> E insertNew(E entity)
-    throws SQLException, HydrationException {
-        // FIXME: manage transaction and retrurn hydrated entity
+    public <E extends Entity> int insertNew(E entity)
+    throws SQLException {
 
         var sql = String.format(
                 "INSERT INTO %1$s (%2$s) VALUES (%3$s); ",
-                EntityAnnotationReflector
-                        .getTableName(entity.getClass()),
 
-                EntityAnnotationReflector
-                        .getColumnAnnotatedFields(entity.getClass())
-                        .filter(field -> !field.isAnnotationPresent(Identity.class))
-                        .map(field -> field.getDeclaredAnnotation(Column.class).value())
-                        .collect(Collectors.joining(", ")),
-
-                EntityAnnotationReflector
-                        .getColumnAnnotatedFields(entity.getClass())
-                        .filter(field -> !field.isAnnotationPresent(Identity.class))
-                        .map(field -> {
-                            // FIXME : Catch correctly the exception
-                            try {
-                                return "'" + field.get(entity).toString() + "'";
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
-                            }
-                            return null;
-                        })
-                        .collect(Collectors.joining(", "))
+                // Get the table name
+                Reflector.of(entity.getClass())
+                         .getClassAnnotationValue(Table.class)
+                         .orElseThrow()
+                ,
+                // Get the fields names annotated with Column annotation ommiting fields with Identity annotation
+                Reflector.of(entity.getClass())
+                         .is(Column.class)
+                         .not(Identity.class)
+                         .names(Column.class)
+                         .collect(Collectors.joining(", "))
+                ,
+                // Get the fields values annotated with Column annotation ommiting fields with Identity annotation
+                Reflector.of(entity.getClass())
+                         .is(Column.class)
+                         .not(Identity.class)
+                         .values(entity)
+                         .map(v -> "'" + v + "'")
+                         .collect(Collectors.joining(", "))
         );
 
-        query(sql, entity.getClass());
-
-        return entity;
-    }
-
-    public <E extends Entity> E updateById(E entity, int id) {
-
-        return entity;
+        return execute(sql);
     }
 
     /**

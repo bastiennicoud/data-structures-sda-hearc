@@ -8,7 +8,8 @@ import java.sql.SQLException;
 
 public class FakeDatasGenerator {
 
-    public static void main(String[] args) throws SQLException, HydrationException {
+    public static void main(String[] args)
+    throws SQLException, HydrationException, NoSuchFieldException, IllegalAccessException {
 
         // initialize a connexion to the DB
         DatabaseConnection conn = new DatabaseConnection();
@@ -23,7 +24,7 @@ public class FakeDatasGenerator {
                     faker.name().firstName(),
                     faker.name().lastName()
             );
-            usr = repo.insertNew(usr);
+            repo.insertNew(usr);
             i++;
         }
     }

@@ -4,7 +4,6 @@ import database.entity.annotations.Column;
 import database.entity.annotations.Identity;
 import database.entity.annotations.Searchable;
 import database.entity.annotations.Table;
-import database.entity.reflector.Reflector;
 import database.exceptions.NoMatchingEntityAnnotation;
 
 import java.lang.reflect.Constructor;
@@ -24,7 +23,6 @@ public class EntityAnnotationReflector {
      */
     public static <T extends Entity> String getTableName(Class<T> entityClass) {
 
-        Reflector.of(entityClass).is(Table.class).not(Searchable.class).value(Table.class);
         return entityClass.getDeclaredAnnotation(Table.class).value();
 
     }
@@ -41,15 +39,46 @@ public class EntityAnnotationReflector {
     }
 
     /**
+     * @return Get the fields of the entity annotated with de Column annotation
+     */
+    public static <T extends Entity> Stream<Field> getColumnAnnotatedFieldsNoIdentity(Class<T> entityClass) {
+
+        return getColumnAnnotatedFields(entityClass)
+                .filter(field -> !field.isAnnotationPresent(Identity.class));
+
+    }
+
+    /**
      * @return The columns names declared in the Field annotations of the entity fields
      */
     public static <T extends Entity> Stream<String> getColumnsNames(Class<T> entityClass) {
 
         return getColumnAnnotatedFields(entityClass)
-                     .map(
-                             field -> field.getDeclaredAnnotation(Column.class)
-                                           .value()
-                     );
+                .map(field ->
+                             field.getDeclaredAnnotation(Column.class)
+                                  .value()
+                );
+
+    }
+
+    /**
+     * @return The columns names declared in the Field annotations
+     * of the entity fields (without the identity column)
+     */
+    public static <T extends Entity> Stream<String> getColumnsNamesNoIdentity(Class<T> entityClass) {
+
+        return getColumnAnnotatedFieldsNoIdentity(entityClass)
+                .map(field -> field.getDeclaredAnnotation(Column.class).value());
+
+    }
+
+    /**
+     * @return The columns values declared in the Field annotations of the entity fields
+     */
+    public static <T extends Entity> Stream<String> getFieldsValuesNoIdentity(Class<T> entityClass) {
+
+        return getColumnAnnotatedFieldsNoIdentity(entityClass)
+                .map(field -> field.getDeclaredAnnotation(Column.class).value());
 
     }
 
