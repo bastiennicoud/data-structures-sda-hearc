@@ -4,52 +4,48 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DatabaseConnexion {
+/**
+ * Container to abastract a JDBC connexion to sqlite databas
+ * Implement AutoClosable, therefore it can be used in a try with resources
+ */
+public class DatabaseConnexion implements AutoCloseable {
 
     // SQLite database file (relative from project root)
     private final String url = "jdbc:sqlite:./src/main/resources/database.db";
+
     private Connection dbConnection = null;
 
     /**
      * Initialise a connexion to the db when creating an instance
      */
-    public DatabaseConnexion() {
-        // Try to initialise database connexion
-        try {
+    public DatabaseConnexion() throws SQLException {
 
-            this.dbConnection = DriverManager.getConnection(this.url);
+        this.dbConnection = DriverManager.getConnection(this.url);
 
-            System.out.println("Connexion established to database.");
+        System.out.println("Connexion established to database.");
 
-        } catch (SQLException e) {
-
-            System.out.println(e.getErrorCode() + e.getMessage());
-
-        }
     }
 
     /**
-     * Allow to close the database connexion
+     * Close the underlying database connexion
      */
-    public void closeConnexion() {
-        try {
+    @Override
+    public void close() throws SQLException {
 
-            if (this.dbConnection != null) {
-                this.dbConnection.close();
-            }
-
-        } catch (SQLException e) {
-
-            System.out.println(e.getErrorCode() + e.getMessage());
-
+        if (this.dbConnection != null) {
+            this.dbConnection.close();
         }
     }
 
     public String getUrl() {
+
         return url;
     }
 
     public Connection getDbConnection() {
+
         return dbConnection;
     }
+
+
 }

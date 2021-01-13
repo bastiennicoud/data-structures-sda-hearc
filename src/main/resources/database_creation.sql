@@ -35,18 +35,8 @@ ORDER BY rank;
 
 INSERT INTO full_text_search_index
 VALUES ('Utilisateur',
-        'Bryan Gomes',
-        '',
-        'users',
-        '3'),
-       ('Utilisateur',
-        'Toto tutu',
-        '',
-        'users',
-        '3'),
-       ('Utilisateur',
-        'Tata Titi',
-        '',
+        'Tutu toto tata',
+        'sdsddsf sdsfs''f',
         'users',
         '3');
 
