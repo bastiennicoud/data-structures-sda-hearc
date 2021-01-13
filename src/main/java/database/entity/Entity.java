@@ -1,5 +1,7 @@
 package database.entity;
 
+import database.entity.annotations.Column;
+import database.entity.reflector.Reflector;
 import database.exceptions.HydrationFieldException;
 
 import java.lang.reflect.Field;
@@ -18,7 +20,7 @@ public abstract class Entity {
     protected Entity(ResultSet dbResults) {
 
         // Retrieve all the fields annotated with Column annotation
-        Stream<Field> fields = EntityAnnotationReflector.getColumnAnnotatedFields(this.getClass());
+        Stream<Field> fields = Reflector.of(this.getClass()).is(Column.class).stream();
 
         // Iterates the fields and tries to hydrate the value from the reflected column name
         fields.forEach(f -> {

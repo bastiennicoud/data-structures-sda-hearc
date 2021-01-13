@@ -30,9 +30,8 @@ public class EntityHydrator {
                 datas.add(
                         // Get the entity constructor and instantiate a
                         // new entity with the result set for hydration
-                        EntityAnnotationReflector
-                                .getEntityHydratorConstructor(entityClass)
-                                .newInstance(results)
+                        entityClass.getConstructor(ResultSet.class)
+                                   .newInstance(results)
                 );
             }
 
