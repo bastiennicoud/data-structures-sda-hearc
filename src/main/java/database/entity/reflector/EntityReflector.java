@@ -3,7 +3,9 @@ package database.entity.reflector;
 import database.entity.Entity;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -30,20 +32,7 @@ public class EntityReflector<T extends Entity> implements Reflector<T> {
 
     public <A extends Annotation> Optional<String> getClassAnnotationValue(Class<A> annotationClass) {
 
-        try {
-            return Optional.of(entityClass.getDeclaredAnnotation(annotationClass)
-                                          .getClass()
-                                          .getField("value")
-                                          .get(entityClass)
-                                          .toString());
-
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-
-            System.out.println("Impossible to get the value from the required annotation :");
-            e.printStackTrace();
-
-            return Optional.empty();
-        }
+        return getAnnotationValue(entityClass, annotationClass);
 
     }
 
@@ -108,15 +97,17 @@ public class EntityReflector<T extends Entity> implements Reflector<T> {
 
     }
 
-    private <A extends Annotation> Optional<String> getAnnotationValue(Field f, Class<A> annotationClass) {
+    private <A extends Annotation> Optional<String> getAnnotationValue(AnnotatedElement el, Class<A> annotationClass) {
 
         try {
 
-            return Optional.of(f.getDeclaredAnnotation(annotationClass)
-                                .getClass()
-                                .getField("value").get(entityClass).toString());
+            return Optional.of(el.getDeclaredAnnotation(annotationClass)
+                                 .getClass()
+                                 .getMethod("value")
+                                 .invoke(el.getDeclaredAnnotation(annotationClass))
+                                 .toString());
 
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 
             System.out.println("Impossible to get the value from the required annotation :");
             e.printStackTrace();

@@ -52,6 +52,8 @@ public class DataRepository extends BaseRepository {
                          .orElseThrow()
         );
 
+        System.out.println(sql);
+
         return query(sql, entityClass);
 
     }
@@ -79,6 +81,8 @@ public class DataRepository extends BaseRepository {
                 ,
                 id
         );
+
+        System.out.println(sql);
 
         return query(sql, entityClass).get(0);
     }
@@ -110,6 +114,8 @@ public class DataRepository extends BaseRepository {
                          .collect(Collectors.joining(", "))
         );
 
+        System.out.println(sql);
+
         return execute(sql);
     }
 
@@ -123,28 +129,37 @@ public class DataRepository extends BaseRepository {
     public <E extends Entity> List<E> textSearch(Class<E> entityClass, String[] tokens)
     throws SQLException, HydrationException {
 
-        var sql = String.format(
-                "SELECT %1$s FROM %2$s WHERE %3$s MATCH '%4$s' ORDER BY rank",
-                // Fill the list of columns to retrieve
-                Reflector.of(entityClass)
-                         .names(Column.class)
-                         .collect(Collectors.joining(", "))
-                ,
-                // Fill the table
-                Reflector.of(entityClass)
-                         .getClassAnnotationValue(Table.class)
-                         .orElseThrow()
-                ,
-                // Fill where you want to search
-                Reflector.of(entityClass)
-                         .getClassAnnotationValue(Table.class)
-                         .orElseThrow()
-                ,
-                // The FTS5 match query string
-                Arrays.stream(tokens)
-                      .map(t -> String.format("\" %1$s \" *", t))
-                      .collect(Collectors.joining(" "))
-        );
+        String sql = "";
+        try {
+            sql = String.format(
+                    "SELECT %1$s FROM %2$s WHERE %3$s MATCH '%4$s' ORDER BY rank",
+                    // Fill the list of columns to retrieve
+                    Reflector.of(entityClass)
+                             .names(Column.class)
+                             .collect(Collectors.joining(", "))
+                    ,
+                    // Fill the table
+                    Reflector.of(entityClass)
+                             .getClassAnnotationValue(Table.class)
+                             .orElseThrow()
+                    ,
+                    // Fill where you want to search
+                    Reflector.of(entityClass)
+                             .getClassAnnotationValue(Table.class)
+                             .orElseThrow()
+                    ,
+                    // The FTS5 match query string
+                    Arrays.stream(tokens)
+                          .map(t -> String.format("\" %1$s \" *", t))
+                          .collect(Collectors.joining(" "))
+            );
+        } catch (Exception e) {
+            System.out.println("Error generating the sql query");
+            e.printStackTrace();
+        }
+
+
+        System.out.println(sql);
 
         return query(sql, entityClass);
     }
