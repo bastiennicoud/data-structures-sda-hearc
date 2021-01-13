@@ -25,7 +25,7 @@ public class Main {
     // Listen port for the server
     static final int PORT = 8080;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         System.out.println("Starting EduLearn !");
 
@@ -36,22 +36,7 @@ public class Main {
             // Create the repository for future DB call's
             DataRepository repo = new DataRepository(conn.getDbConnection());
 
-            // Initialize a simple java Httpserver
-            HttpServer server = HttpServer.create(new InetSocketAddress(HOST_NAME, PORT), 0);
-
-            // Register http handlers
-            // Homepage (return the resources/homepage.html file)
-            server.createContext("/", new HomePageHandler());
-            // Handler for the stylesheet (resources/app.css file
-            server.createContext("/stylesheet", new StyleSheetHandler());
-            // Handler for the script (resources/script.js)
-            server.createContext("/javascript", new ScriptHandler());
-            // Search endpoint handler
-            // Accept POST request with search needle in json body
-            // Return a json payload wiht the matching results
-            server.createContext("/search", new SearchHandler(repo));
-
-            server.start();
+            startHttpServer(repo);
 
             System.out.printf(
                     "Http server started on %1$s port %2$s%n",
@@ -71,6 +56,33 @@ public class Main {
             e.printStackTrace();
 
         }
+    }
+
+    /**
+     * Start the Edulearn Http server
+     *
+     * @param repo An initialized database repository
+     * @throws IOException If the server cant be created
+     */
+    private static void startHttpServer(DataRepository repo) throws IOException {
+
+        // Initialize a simple java Httpserver
+        HttpServer server = HttpServer.create(new InetSocketAddress(HOST_NAME, PORT), 0);
+
+        // Register http handlers
+        // Homepage (return the resources/homepage.html file)
+        server.createContext("/", new HomePageHandler());
+        // Handler for the stylesheet (resources/app.css file
+        server.createContext("/stylesheet", new StyleSheetHandler());
+        // Handler for the script (resources/script.js)
+        server.createContext("/javascript", new ScriptHandler());
+        // Search endpoint handler
+        // Accept POST request with search needle in json body
+        // Return a json payload wiht the matching results
+        server.createContext("/search", new SearchHandler(repo));
+
+        server.start();
+
     }
 
 }

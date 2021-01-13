@@ -11,16 +11,16 @@ import java.sql.SQLException;
 public class DatabaseConnexion implements AutoCloseable {
 
     // SQLite database file (relative from project root)
-    private final String url = "jdbc:sqlite:./src/main/resources/database.db";
+    private final String connectionString = "jdbc:sqlite:./src/main/resources/database.db";
 
-    private Connection dbConnection = null;
+    private final Connection dbConnection;
 
     /**
      * Initialise a connexion to the db when creating an instance
      */
     public DatabaseConnexion() throws SQLException {
 
-        this.dbConnection = DriverManager.getConnection(this.url);
+        this.dbConnection = DriverManager.getConnection(connectionString);
 
         System.out.println("Connexion established to database.");
 
@@ -32,20 +32,18 @@ public class DatabaseConnexion implements AutoCloseable {
     @Override
     public void close() throws SQLException {
 
-        if (this.dbConnection != null) {
-            this.dbConnection.close();
-        }
+        this.dbConnection.close();
+
     }
 
-    public String getUrl() {
+    public String getConnectionString() {
 
-        return url;
+        return connectionString;
     }
 
     public Connection getDbConnection() {
 
         return dbConnection;
     }
-
 
 }
