@@ -1,7 +1,6 @@
 package database;
 
 import database.entity.Entity;
-import database.entity.EntityAnnotationReflector;
 import database.entity.annotations.Column;
 import database.entity.annotations.Identity;
 import database.entity.annotations.Table;
@@ -40,12 +39,17 @@ public class DataRepository extends BaseRepository {
 
         // Generate a select query with parameters annotated on the Entity class
         var sql = String.format(
+                // Query template
                 "SELECT %1$s FROM %2$s",
-                EntityAnnotationReflector
-                        .getColumnsNames(entityClass)
-                        .collect(Collectors.joining(", ")),
-                EntityAnnotationReflector
-                        .getTableName(entityClass)
+                // Get the columns names
+                Reflector.of(entityClass)
+                         .names(Column.class)
+                         .collect(Collectors.joining(", "))
+                ,
+                // Get the table name
+                Reflector.of(entityClass)
+                         .getClassAnnotationValue(Table.class)
+                         .orElseThrow()
         );
 
         return query(sql, entityClass);
@@ -57,13 +61,22 @@ public class DataRepository extends BaseRepository {
 
         var sql = String.format(
                 "SELECT %1$s FROM %2$s WHERE %3$s = %4$s",
-                EntityAnnotationReflector
-                        .getColumnsNames(entityClass)
-                        .collect(Collectors.joining(", ")),
-                EntityAnnotationReflector
-                        .getTableName(entityClass),
-                EntityAnnotationReflector
-                        .getIdentityColumnName(entityClass),
+                // Get the columns names
+                Reflector.of(entityClass)
+                         .names(Column.class)
+                         .collect(Collectors.joining(", "))
+                ,
+                // Get the table name
+                Reflector.of(entityClass)
+                         .getClassAnnotationValue(Table.class)
+                         .orElseThrow()
+                ,
+                // Get a column annotated with Identity
+                Reflector.of(entityClass)
+                         .is(Identity.class)
+                         .firstName(Column.class)
+                         .orElseThrow()
+                ,
                 id
         );
 
@@ -113,15 +126,20 @@ public class DataRepository extends BaseRepository {
         var sql = String.format(
                 "SELECT %1$s FROM %2$s WHERE %3$s MATCH '%4$s' ORDER BY rank",
                 // Fill the list of columns to retrieve
-                EntityAnnotationReflector
-                        .getColumnsNames(entityClass)
-                        .collect(Collectors.joining(", ")),
+                Reflector.of(entityClass)
+                         .names(Column.class)
+                         .collect(Collectors.joining(", "))
+                ,
                 // Fill the table
-                EntityAnnotationReflector
-                        .getTableName(entityClass),
+                Reflector.of(entityClass)
+                         .getClassAnnotationValue(Table.class)
+                         .orElseThrow()
+                ,
                 // Fill where you want to search
-                EntityAnnotationReflector
-                        .getTableName(entityClass),
+                Reflector.of(entityClass)
+                         .getClassAnnotationValue(Table.class)
+                         .orElseThrow()
+                ,
                 // The FTS5 match query string
                 Arrays.stream(tokens)
                       .map(t -> String.format("\" %1$s \" *", t))
