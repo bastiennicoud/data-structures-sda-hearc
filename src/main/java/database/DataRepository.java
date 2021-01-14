@@ -4,8 +4,8 @@ import database.entity.Entity;
 import database.entity.annotations.Column;
 import database.entity.annotations.Identity;
 import database.entity.annotations.Table;
+import database.entity.hydrator.exceptions.HydrationException;
 import database.entity.reflector.Reflector;
-import database.exceptions.HydrationException;
 import database.exceptions.SqlQueryFormattingException;
 
 import java.sql.Connection;
@@ -125,7 +125,7 @@ public class DataRepository extends BaseRepository {
     throws SQLException, HydrationException, SqlQueryFormattingException {
 
         var query = formatSqlQuery(
-                "SELECT %1$s FROM %2$s WHERE %3$s MATCH '%4$s' ORDER BY rank",
+                "SELECT %1$s FROM %2$s WHERE %3$s MATCH '%4$s' ORDER BY rank LIMIT 20",
                 // Fill the list of columns to retrieve
                 Reflector.of(entityClass)
                          .names(Column.class)

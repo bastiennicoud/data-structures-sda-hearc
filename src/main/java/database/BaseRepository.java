@@ -1,8 +1,8 @@
 package database;
 
 import database.entity.Entity;
-import database.entity.Hydrator;
-import database.exceptions.HydrationException;
+import database.entity.hydrator.Hydrator;
+import database.entity.hydrator.exceptions.HydrationException;
 import database.exceptions.SqlQueryFormattingException;
 
 import java.sql.Connection;

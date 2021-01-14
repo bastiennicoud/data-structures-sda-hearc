@@ -43,6 +43,14 @@ public class EntityReflector<T extends Entity> implements Reflector<T> {
     }
 
     /**
+     * @return Get the underlying stream as an array
+     */
+    public Field[] toArray() {
+
+        return fieldsStream.toArray(Field[]::new);
+    }
+
+    /**
      * Get the value of an annotation declared on the entity class
      *
      * @param annotationClass The class that mdelize the annotation you whant to find

@@ -1,6 +1,7 @@
-package database.entity;
+package database.entity.hydrator;
 
-import database.exceptions.HydrationException;
+import database.entity.Entity;
+import database.entity.hydrator.exceptions.HydrationException;
 
 import java.sql.ResultSet;
 import java.util.List;

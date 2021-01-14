@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import database.DataRepository;
-import database.exceptions.HydrationException;
+import database.entity.hydrator.exceptions.HydrationException;
 import database.exceptions.SqlQueryFormattingException;
 import entities.SearchResult;
 
@@ -98,7 +98,7 @@ public class SearchHandler extends HttpHandler {
             sendHttpError(
                     exchange,
                     500,
-                    "Error while performing json serialisation or deserialisation"
+                    "Error while performing json serialisation or deserialization"
             );
 
             System.out.println("Error while parsing or serializing json");

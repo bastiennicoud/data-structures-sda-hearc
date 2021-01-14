@@ -1,4 +1,4 @@
-package database.exceptions;
+package database.entity.hydrator.exceptions;
 
 public class HydrationException extends Exception {
 

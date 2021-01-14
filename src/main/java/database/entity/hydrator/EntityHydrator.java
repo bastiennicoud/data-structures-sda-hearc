@@ -1,16 +1,17 @@
-package database.entity;
+package database.entity.hydrator;
 
+import database.entity.Entity;
 import database.entity.annotations.Column;
+import database.entity.hydrator.exceptions.EntityHydrationException;
+import database.entity.hydrator.exceptions.FieldHydrationException;
+import database.entity.hydrator.exceptions.HydrationException;
 import database.entity.reflector.Reflector;
-import database.exceptions.HydrationException;
-import database.exceptions.HydrationFieldException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
 /**
  * Is responsible of the hydration of a specifc entity from the datas of a result set.
@@ -33,46 +34,69 @@ public class EntityHydrator<E extends Entity> implements Hydrator<E> {
      */
     public ArrayList<E> hydrate(ResultSet results) throws HydrationException {
 
-        var datas = new ArrayList<E>();
-
         try {
 
-            System.out.println("Fetch size" + results.getFetchSize());
+            var datas = new ArrayList<E>(20);
+
             // Iterates trough the query results
             while (results.next()) {
 
-                var entity = entityClass.getConstructor().newInstance();
-                Stream<Field> fields = Reflector.of(entity.getClass()).is(Column.class).stream();
-
-                fields.forEach(f -> {
-                    try {
-                        f.set(entity, hydrateField(f, results));
-                    } catch (IllegalAccessException | SQLException | HydrationFieldException e) {
-                        System.out.println("Hydration error");
-                        e.printStackTrace();
-                    }
-                });
+                var entity = hydrateEntity(
+                        entityClass.getConstructor().newInstance(),
+                        results
+                );
 
                 datas.add(entity);
             }
 
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            return datas;
+
+        } catch (NoSuchMethodException |
+                InstantiationException |
+                IllegalAccessException |
+                SQLException |
+                EntityHydrationException |
+                InvocationTargetException e) {
 
             throw new HydrationException(
-                    "Reflexion error, Impossible to get the constructor of the Entity.",
-                    e
-            );
-
-        } catch (SQLException e) {
-
-            throw new HydrationException(
-                    "Hydration error, Impossible to get the datas for hydration.",
+                    "Error while trying to hydrate the database results to the " + entityClass.getName() + "entity.",
                     e
             );
 
         }
 
-        return datas;
+    }
+
+    /**
+     * @param entity  A fresh instance of the entity to hydrate
+     * @param results The result set a the tuple you want to hydrate from
+     * @return The entity fullfilled with the datas form the resultset tuple
+     * @throws EntityHydrationException Problem trying to get the values from the result set, converting types, or
+     *                                  trying to access the entity fields
+     */
+    private E hydrateEntity(E entity, ResultSet results) throws EntityHydrationException {
+
+        try {
+
+            // Get the fields declared with a column annotation of the entity
+            var fields = Reflector.of(entity.getClass()).is(Column.class).toArray();
+
+            // Try to hydrate each fields
+            for (var f : fields) {
+                f.set(entity, hydrateField(f, results));
+            }
+
+            return entity;
+
+        } catch (IllegalAccessException | SQLException | FieldHydrationException e) {
+
+            throw new EntityHydrationException(
+                    "Error while trying to hydrate " + entity.getClass().getName() + "entity.",
+                    e
+            );
+
+        }
+
     }
 
     /**
@@ -82,10 +106,10 @@ public class EntityHydrator<E extends Entity> implements Hydrator<E> {
      *
      * @return The value of the corresponding column for the field
      * @throws SQLException            Throws if its impossible to get the column ata from the result set
-     * @throws HydrationFieldException Throws if the type is unsupported by the hydrator
+     * @throws FieldHydrationException Throws if the type is unsupported by the hydrator
      */
     private Object hydrateField(Field field, ResultSet resultSet)
-    throws SQLException, HydrationFieldException {
+    throws SQLException, FieldHydrationException {
 
         // Check the field type to use the correct method to retrieve the column from the result set
         var columnName = field.getDeclaredAnnotation(Column.class).value();
@@ -104,7 +128,7 @@ public class EntityHydrator<E extends Entity> implements Hydrator<E> {
             case "java.sql.Time" -> resultSet.getTime(columnName);
             case "java.sql.Timestamp" -> resultSet.getTimestamp(columnName);
             // Throws a exception to indicate that the hydrator dont know hot to hydrate this field type
-            default -> throw new HydrationFieldException(
+            default -> throw new FieldHydrationException(
                     "Cannot hydrate this type of field. Type unsupported by hydrator."
             );
         };
