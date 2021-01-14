@@ -5,8 +5,6 @@ import database.entity.annotations.Column;
 import database.entity.annotations.Searchable;
 import database.entity.annotations.Table;
 
-import java.sql.ResultSet;
-
 /**
  * Represent a search result, for the full text search mechanism
  */
@@ -47,10 +45,5 @@ public class SearchResult extends Entity {
      */
     @Column("resource_id")
     public int resourceId;
-
-    public SearchResult(ResultSet dbResults) {
-
-        super(dbResults);
-    }
 
 }

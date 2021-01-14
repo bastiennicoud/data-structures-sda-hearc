@@ -1,11 +1,9 @@
 package entities;
 
+import database.entity.Entity;
 import database.entity.annotations.Column;
 import database.entity.annotations.Identity;
 import database.entity.annotations.Table;
-import database.entity.Entity;
-
-import java.sql.ResultSet;
 
 @Table("users")
 public class User extends Entity {
@@ -19,15 +17,6 @@ public class User extends Entity {
 
     @Column("last_name")
     public String lastName;
-
-    /**
-     * Call the parent constructor for auto hydration from a result set
-     */
-    public User(ResultSet dbResults) {
-
-        super(dbResults);
-
-    }
 
     public User(String firstName, String lastName) {
 
