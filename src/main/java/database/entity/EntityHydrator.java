@@ -10,17 +10,43 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
- * Provides methods to hydrate Entities from SQL tuples using reflected entities annotations.
+ * Is responsible of the hydration of a specifc entity from the datas of a result set.
  */
-public class EntityHydrator {
+public class EntityHydrator<E extends Entity> {
 
-    public static <E extends Entity> ArrayList<E> hydrate(
-            ResultSet results,
-            Class<E> entityClass
-    ) throws HydrationException {
+    private final Class<E> entityClass;
+
+    public EntityHydrator(Class<E> entityClass) {
+
+        this.entityClass = entityClass;
+    }
+
+    /**
+     * Factory to create a new hydrator for the desired entity
+     *
+     * @param entityClass The class that modelise the entity you whant to hydrate
+     * @param <E>         The tyle of the Entity
+     * @return A fresh entity hydrator thet modelise the provided entity type
+     */
+    public static <E extends Entity> EntityHydrator<E> of(Class<E> entityClass) {
+
+        Objects.requireNonNull(entityClass);
+
+        return new EntityHydrator<>(entityClass);
+    }
+
+    /**
+     * Hydrate the entity type form a result set
+     *
+     * @param results A result set from the database that match the entity you want to hydrate
+     * @return An ArrayList of the hydrated entities
+     * @throws HydrationException If there is an error during the hydration process
+     */
+    public ArrayList<E> hydrate(ResultSet results) throws HydrationException {
 
         var datas = new ArrayList<E>();
 
@@ -34,7 +60,7 @@ public class EntityHydrator {
 
                 fields.forEach(f -> {
                     try {
-                        f.set(entity, EntityHydrator.hydrateField(f, results));
+                        f.set(entity, hydrateField(f, results));
                     } catch (IllegalAccessException | SQLException | HydrationFieldException e) {
                         System.out.println("Hydration error");
                         e.printStackTrace();
@@ -64,12 +90,15 @@ public class EntityHydrator {
     }
 
     /**
-     * Return the value for a specific field with the corresponding type
+     * Get the value form the result set for a specific field of the entiry.
+     * The field must be annotated fir the Column annotation to retrieve the
+     * corresponding value from the result set.
+     *
      * @return The value of the corresponding column for the field
-     * @throws SQLException Throws if its impossible to get the column ata from the result set
+     * @throws SQLException            Throws if its impossible to get the column ata from the result set
      * @throws HydrationFieldException Throws if the type is unsupported by the hydrator
      */
-    public static Object hydrateField(Field field, ResultSet resultSet)
+    private Object hydrateField(Field field, ResultSet resultSet)
     throws SQLException, HydrationFieldException {
 
         // Check the field type to use the correct method to retrieve the column from the result set
@@ -90,7 +119,7 @@ public class EntityHydrator {
             case "java.sql.Timestamp" -> resultSet.getTimestamp(columnName);
             // Throws a exception to indicate that the hydrator dont know hot to hydrate this field type
             default -> throw new HydrationFieldException(
-                    "Cannot get field, type unsupported by hydrator, custom implementation required"
+                    "Cannot hydrate this type of field. Type unsupported by hydrator."
             );
         };
     }
