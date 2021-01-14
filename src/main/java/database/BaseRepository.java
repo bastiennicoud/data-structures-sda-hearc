@@ -1,7 +1,7 @@
 package database;
 
 import database.entity.Entity;
-import database.entity.EntityHydrator;
+import database.entity.Hydrator;
 import database.exceptions.HydrationException;
 import database.exceptions.SqlQueryFormattingException;
 
@@ -47,7 +47,7 @@ public class BaseRepository {
 
         try (var statement = dbConnection.createStatement();) {
             var results = statement.executeQuery(query);
-            return EntityHydrator.of(entityClass).hydrate(results);
+            return Hydrator.of(entityClass).hydrate(results);
         }
 
     }
@@ -70,6 +70,12 @@ public class BaseRepository {
 
     }
 
+    /**
+     * @param queryFormat A <a href="../util/Formatter.html#syntax">format string</a>
+     * @param args        Arguments referenced by the format specifiers in the format string.
+     * @return Raw SQL query with arguments binded in the base query string
+     * @throws SqlQueryFormattingException Problem whilt trying to format the query
+     */
     protected String formatSqlQuery(String queryFormat, Object... args) throws SqlQueryFormattingException {
 
         try {

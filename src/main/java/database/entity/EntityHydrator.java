@@ -10,33 +10,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
  * Is responsible of the hydration of a specifc entity from the datas of a result set.
  */
-public class EntityHydrator<E extends Entity> {
+public class EntityHydrator<E extends Entity> implements Hydrator<E> {
 
     private final Class<E> entityClass;
 
     public EntityHydrator(Class<E> entityClass) {
 
         this.entityClass = entityClass;
-    }
-
-    /**
-     * Factory to create a new hydrator for the desired entity
-     *
-     * @param entityClass The class that modelise the entity you whant to hydrate
-     * @param <E>         The tyle of the Entity
-     * @return A fresh entity hydrator thet modelise the provided entity type
-     */
-    public static <E extends Entity> EntityHydrator<E> of(Class<E> entityClass) {
-
-        Objects.requireNonNull(entityClass);
-
-        return new EntityHydrator<>(entityClass);
     }
 
     /**
@@ -52,6 +37,7 @@ public class EntityHydrator<E extends Entity> {
 
         try {
 
+            System.out.println("Fetch size" + results.getFetchSize());
             // Iterates trough the query results
             while (results.next()) {
 
