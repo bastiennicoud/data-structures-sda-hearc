@@ -4,21 +4,27 @@
     <meta charset="UTF-8">
     <title>EduLearn Home</title>
     <link rel="stylesheet" type="text/css" href="/stylesheet">
+    <script src="javascript"></script>
 </head>
 <body>
 <header>
     <h1>Bienvenue sur Edulearn !</h1>
 </header>
 <section id="search_box">
-    <input
-            id="search"
-            type="search"
-            name="search"
-            placeholder="Recherche sur EduLearn"
-    >
+    <label for="search">
+        <input id="search"
+               type="search"
+               name="search"
+               placeholder="Recherche sur EduLearn"
+        >
+    </label>
 </section>
 <section id="search_results">
+    <div class="result_item">
+        <div class="result_title">
+            <p>Aucun résultats, effectuer une recherche dans EduLearn !</p>
+        </div>
+    </div>
 </section>
-<script src="javascript"></script>
 </body>
 </html>

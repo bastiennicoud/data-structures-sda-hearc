@@ -28,9 +28,19 @@ const performSearch = async function (needle) {
 
         let searchResultsHtml = ``
 
-        for (let e of data) {
-            console.log(e)
+        if (data.length === 0) {
             searchResultsHtml += `
+            <div class="result_item">
+                <div class="result_title">
+                    <p>Aucun resultats correspondant a votre recherche...</p>
+                </div>
+            </div>
+            `
+        } else {
+
+            for (let e of data) {
+                console.log(e)
+                searchResultsHtml += `
             <div class="result_item">
                 <div class="result_title">
                     <p>${e.title}</p>
@@ -43,7 +53,9 @@ const performSearch = async function (needle) {
                 </div>
             </div>
             `
+            }
         }
+
         searchBox.innerHTML = searchResultsHtml
 
     } catch (e) {

@@ -52,7 +52,7 @@ public class SearchHandler extends HttpHandler {
                                .collect(Collectors.joining());
 
             System.out.printf(
-                    "Request body %1$s",
+                    "Request body %1$s \r",
                     body
             );
 
