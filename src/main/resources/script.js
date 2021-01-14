@@ -1,3 +1,6 @@
+/**
+ * Register a event listner on input events that triggers the search function
+ */
 const registerSearch = function () {
 
     console.log("Register search listener")
@@ -10,10 +13,17 @@ const registerSearch = function () {
     })
 }
 
+/**
+ * Call the Java API with the search needle, and display the results in the web page
+ *
+ * @param needle {String} The search string from the input
+ * @returns {Promise<void>}
+ */
 const performSearch = async function (needle) {
 
     try {
 
+        // Call the api search endpoint with the needle as payload
         let data = await fetch('/search', {
             method: 'POST',
             body: JSON.stringify({
@@ -21,14 +31,14 @@ const performSearch = async function (needle) {
             })
         }).then(res => res.json())
 
-        console.log("Search results : ", data)
-
-        // Display search results
+        // Get the reference to the html container for the results
         let searchBox = document.querySelector('#search_results')
 
         let searchResultsHtml = ``
 
         if (data.length === 0) {
+
+            // If there is no results, display a simple message
             searchResultsHtml += `
             <div class="result_item">
                 <div class="result_title">
@@ -36,8 +46,10 @@ const performSearch = async function (needle) {
                 </div>
             </div>
             `
+
         } else {
 
+            // If there is results, iterate trough the result to generate a result item per result
             for (let e of data) {
                 console.log(e)
                 searchResultsHtml += `
@@ -56,6 +68,7 @@ const performSearch = async function (needle) {
             }
         }
 
+        // Put the results in the page
         searchBox.innerHTML = searchResultsHtml
 
     } catch (e) {
@@ -66,6 +79,7 @@ const performSearch = async function (needle) {
 
 }
 
+// On page load, call the search registration function
 window.onload = function () {
     registerSearch()
 }

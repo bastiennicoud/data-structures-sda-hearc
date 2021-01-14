@@ -1,4 +1,4 @@
-/**
+/**************************
 SIMPLE CSS RESET RULES
  */
 html {
@@ -25,16 +25,22 @@ img {
     height: auto;
 }
 
-/* Set page font familiy */
+/**************************
+Set some colors for further reuse
+*/
 :root {
     --white: ghostwhite;
     --gray: gray;
 }
 
+
 * {
     font-family: sans-serif;
 }
 
+/**************************
+Style for the header
+*/
 header {
     height: 120px;
     display: flex;
@@ -43,6 +49,9 @@ header {
     font-weight: bold;
 }
 
+/**************************
+Search box and search input style
+*/
 #search_box {
     padding: 20px 0;
     display: flex;
@@ -65,6 +74,9 @@ header {
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.37);
 }
 
+/**************************
+Results box and results items
+*/
 #search_results {
     margin: 20px 0;
     display: flex;
