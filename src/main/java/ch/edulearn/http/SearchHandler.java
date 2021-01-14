@@ -51,10 +51,7 @@ public class SearchHandler extends HttpHandler {
             var body = bfReader.lines()
                                .collect(Collectors.joining());
 
-            System.out.printf(
-                    "Request body %1$s \r",
-                    body
-            );
+            System.out.println("Request body :" + body);
 
             // Parse the json paylod
             var search = mapper.readTree(

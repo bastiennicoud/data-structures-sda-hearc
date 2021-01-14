@@ -1,6 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="EduLearn">
-    <output-path>$PROJECT_DIR$/out/artifacts/EduLearn</output-path>
-    <root id="archive" name="EduLearn.jar" />
-  </artifact>
-</component>

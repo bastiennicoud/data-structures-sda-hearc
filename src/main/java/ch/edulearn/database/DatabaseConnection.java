@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class DatabaseConnection implements AutoCloseable {
 
     // SQLite ch.edulearn.database file (relative from project root)
-    private final String connectionString = "jdbc:sqlite:./src/main/resources/ch.edulearn.database.db";
+    private final String connectionString = "jdbc:sqlite:./src/main/resources/database.db";
 
     private final Connection dbConnection;
 
