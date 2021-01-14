@@ -79,7 +79,9 @@ public class BaseRepository {
     protected String formatSqlQuery(String queryFormat, Object... args) throws SqlQueryFormattingException {
 
         try {
-            return String.format(queryFormat, args);
+            var sql = String.format(queryFormat, args);
+            System.out.println(sql);
+            return sql;
         } catch (Exception e) {
             System.out.println("Error while trying to format the sql query :");
             System.out.println("Provided query format :" + queryFormat);

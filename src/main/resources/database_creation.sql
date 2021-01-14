@@ -12,36 +12,47 @@ CREATE TABLE users
 -- Index on users names
 CREATE INDEX users_names ON users (first_name, last_name);
 
+-- User insertion
+INSERT INTO users (first_name, last_name)
+VALUES ('Tutu', 'Toto');
+
+-- VIRTUAL TABLE FOR FULL TEXT SEARCH
+-- ----------------------------------
+
 -- Search table for full text search on the indexed datas
-CREATE VIRTUAL TABLE full_text_search_index
+CREATE VIRTUAL TABLE edulearn_full_text_search
     USING FTS5
 (
     type,        -- The human readable type (Ulilisateur, Cours...)
     title,       -- The title of the resource (user name, course name)
     description, -- Some supplementary search friendly information
     resource_table_name
-    UNINDEXED,
+    UNINDEXED,   -- Resource table name
     resource_id
-    UNINDEXED,
-    tokenize=
-    "trigram"
+    UNINDEXED,   -- The id of the ressource to retrieve it
+    prefix=
+    1,
+    prefix=
+    2
 );
 
-INSERT INTO users (first_name, last_name)
-VALUES ('bastien', 'thiubault');
+-- Drop the virtual table
+DROP TABLE IF EXISTS edulearn_full_text_search;
 
-SELECT *
-FROM full_text_search_index
-WHERE title MATCH '"test" *'
-ORDER BY rank;
-
-INSERT INTO full_text_search_index
+-- Inserting on the search virtual table
+INSERT INTO edulearn_full_text_search
 VALUES ('Utilisateur',
-        'Tutu toto tata',
-        'sdsddsf sdsfs''f',
+        'Jean Phil-ai-mon-pantalon',
+        'Découvre des cours de java et python.',
         'users',
-        '3');
+        '1');
+/*
+SELECT *
+FROM edulearn_full_text_search
+WHERE title MATCH '"test" *'
+ORDER BY rank;*/
+
 
 DELETE
-FROM full_text_search_index
+FROM edulearn_full_text_search
 WHERE title = 'Bryan Gomes';

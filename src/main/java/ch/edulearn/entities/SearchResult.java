@@ -8,7 +8,7 @@ import ch.edulearn.database.entity.annotations.Table;
 /**
  * Represent a search result, for the full text search mechanism
  */
-@Table("full_text_search_index")
+@Table("edulearn_full_text_search")
 public class SearchResult extends Entity {
 
     /**
