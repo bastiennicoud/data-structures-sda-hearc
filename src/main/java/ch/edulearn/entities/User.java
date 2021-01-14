@@ -18,10 +18,18 @@ public class User extends Entity {
     @Column("last_name")
     public String lastName;
 
-    public User(String firstName, String lastName) {
+    @Column("description")
+    public String description;
+
+    public User(String firstName, String lastName, String description) {
 
         this.firstName = firstName;
         this.lastName = lastName;
+        this.description = description;
+    }
+
+    public User() {
+
     }
 
     public int getId() {
@@ -53,5 +61,16 @@ public class User extends Entity {
 
         this.lastName = lastName;
     }
+
+    public String getDescription() {
+
+        return description;
+    }
+
+    public void setDescription(String description) {
+
+        this.description = description;
+    }
+
 
 }

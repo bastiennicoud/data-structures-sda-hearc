@@ -8,6 +8,7 @@ import ch.edulearn.database.exceptions.SqlQueryFormattingException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Repository base class
@@ -45,7 +46,7 @@ public class BaseRepository {
     public <E extends Entity> ArrayList<E> query(String query, Class<E> entityClass)
     throws SQLException, HydrationException {
 
-        try (var statement = dbConnection.createStatement();) {
+        try (var statement = dbConnection.createStatement()) {
             var results = statement.executeQuery(query);
             return Hydrator.of(entityClass).hydrate(results);
         }
@@ -85,7 +86,7 @@ public class BaseRepository {
         } catch (Exception e) {
             System.out.println("Error while trying to format the sql query :");
             System.out.println("Provided query format :" + queryFormat);
-            System.out.println("Provided query arguments :" + args);
+            System.out.println("Provided query arguments :" + Arrays.toString(args));
             e.printStackTrace();
 
             throw new SqlQueryFormattingException();

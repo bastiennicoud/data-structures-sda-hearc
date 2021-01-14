@@ -23,6 +23,21 @@ public class SchemaDatabaseRepository extends BaseRepository {
         super(dbConnection);
     }
 
+    public <E extends Entity> int dropTableIfExists(Class<E> entityClass)
+    throws SQLException, SqlQueryFormattingException {
+
+        var query = formatSqlQuery(
+                "DROP TABLE IF EXISTS %1$s;",
+
+                // Get the table name
+                Reflector.of(entityClass)
+                         .getClassAnnotationValue(Table.class)
+                         .orElseThrow()
+        );
+
+        return execute(query);
+    }
+
     public <E extends Entity> int createTable(Class<E> entityClass)
     throws SQLException, SqlQueryFormattingException {
 

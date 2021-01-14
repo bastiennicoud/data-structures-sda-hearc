@@ -59,7 +59,7 @@ public class EntityHydrator<E extends Entity> implements Hydrator<E> {
                 InvocationTargetException e) {
 
             throw new HydrationException(
-                    "Error while trying to hydrate the ch.edulearn.database results to the " + entityClass.getName() + "entity.",
+                    "Error while trying to hydrate the database results to the " + entityClass.getName() + " entity.",
                     e
             );
 

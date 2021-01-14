@@ -34,7 +34,8 @@ public class SearchResult extends Entity {
     @Column("description")
     public String description;
 
-    /**s
+    /**
+     * s
      * The resource table name, for retrieving details infos
      */
     @Column("resource_table_name")
@@ -45,5 +46,18 @@ public class SearchResult extends Entity {
      */
     @Column("resource_id")
     public int resourceId;
+
+    public SearchResult(String type, String title, String description, String resourceTable, int resourceId) {
+
+        this.type = type;
+        this.title = title;
+        this.description = description;
+        this.resourceTable = resourceTable;
+        this.resourceId = resourceId;
+    }
+
+    public SearchResult() {
+
+    }
 
 }
