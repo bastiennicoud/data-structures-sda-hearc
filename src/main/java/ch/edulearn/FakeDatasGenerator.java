@@ -20,60 +20,58 @@ import java.util.Locale;
  */
 public class FakeDatasGenerator {
 
+    private static DatabaseConnection conn;
+
+    private static DataRepository repo;
+
+    private static Faker faker;
+
     // This script allows to generate a test ch.edulearn.database with fake datas
     public static void main(String[] args)
     throws SQLException, SqlQueryFormattingException, IllegalAccessException {
 
         // initialize a connexion to the DB
-        DatabaseConnection conn = new DatabaseConnection();
+        conn = new DatabaseConnection();
 
-        generateDatabaseSchema(conn);
+        // Create the repository for future DB call's
+        repo = new DataRepository(conn.getDbConnection());
 
-        generateFakeDatas(conn);
+        // Library to generate on the fly fake datas
+        faker = new Faker(Locale.FRENCH);
+
+        generateDatabaseSchema();
+
+        generateFakeDatas();
     }
 
     /**
      * Generate the database schema
      */
-    private static void generateDatabaseSchema(DatabaseConnection conn)
+    private static void generateDatabaseSchema()
     throws SQLException, SqlQueryFormattingException {
 
         // Create the repository for future DB call's
-        var repo = new SchemaDatabaseRepository(conn.getDbConnection());
+        var schemaRepo = new SchemaDatabaseRepository(conn.getDbConnection());
 
         // Clean the database
-        repo.dropTableIfExists(User.class);
-        repo.dropTableIfExists(SearchResult.class);
+        schemaRepo.dropTableIfExists(User.class);
+        schemaRepo.dropTableIfExists(SearchResult.class);
 
         // Generate the schema
-        repo.createTable(User.class);
-        repo.createFTS5Table(SearchResult.class);
+        schemaRepo.createTable(User.class);
+        schemaRepo.createFTS5Table(SearchResult.class);
     }
 
     /**
      * Fill the database tables with some fake datas
      */
-    private static void generateFakeDatas(DatabaseConnection conn)
+    private static void generateFakeDatas()
     throws SQLException, SqlQueryFormattingException, IllegalAccessException {
 
-        // Create the repository for future DB call's
-        var repo = new DataRepository(conn.getDbConnection());
+        var users = generateFakeUsers(10);
 
-        // Library to generate on the fly fake datas
-        var faker = new Faker(Locale.FRENCH);
+        indexDatasIntoFTS5(users);
 
-        var users = generateFakeUsers(repo, faker, 10);
-
-        // indexDatasIntoFTS5();
-        for (var u : users) {
-            repo.insertNew(new SearchResult(
-                    "Utilisateur",
-                    u.firstName + u.lastName,
-                    u.description,
-                    Reflector.of(u.getClass()).getClassAnnotationValue(Table.class).orElseThrow(),
-                    u.id
-            ));
-        }
     }
 
     /**
@@ -81,7 +79,7 @@ public class FakeDatasGenerator {
      *
      * @return A list of generated users filled with the generated databse id
      */
-    private static List<User> generateFakeUsers(DataRepository repo, Faker faker, int amount)
+    private static List<User> generateFakeUsers(int amount)
     throws SQLException, SqlQueryFormattingException, IllegalAccessException {
 
         var users = new ArrayList<User>(20);
@@ -96,5 +94,20 @@ public class FakeDatasGenerator {
         }
         return users;
     }
+
+    private static void indexDatasIntoFTS5(List<User> users)
+    throws IllegalAccessException, SQLException, SqlQueryFormattingException {
+
+        for (var u : users) {
+            repo.insertNew(new SearchResult(
+                    "Utilisateur",
+                    u.firstName + u.lastName,
+                    u.description,
+                    Reflector.of(u.getClass()).getClassAnnotationValue(Table.class).orElseThrow(),
+                    u.id
+            ));
+        }
+    }
+
 
 }
