@@ -87,6 +87,8 @@ public class BaseRepository {
 
         try {
             var sql = String.format(queryFormat, args);
+
+            // Show the generated query in the console
             System.out.println(sql);
             return sql;
         } catch (Exception e) {

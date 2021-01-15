@@ -47,10 +47,14 @@ VALUES ('Utilisateur',
         'users',
         '1');
 /*
-SELECT *
+SELECT highlight(edulearn_full_text_search, 0, '<b>', '</b>') AS type,
+       highlight(edulearn_full_text_search, 1, '<b>', '</b>') AS title,
+       highlight(edulearn_full_text_search, 2, '<b>', '</b>'),
+       resource_table_name,
+       resource_id
 FROM edulearn_full_text_search
-WHERE title MATCH '"test" *'
-ORDER BY rank;*/
+WHERE edulearn_full_text_search MATCH '"Maxime" *'
+ORDER BY bm25(edulearn_full_text_search, 5, 10, 5);*/
 
 
 DELETE

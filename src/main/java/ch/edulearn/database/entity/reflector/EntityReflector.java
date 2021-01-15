@@ -5,7 +5,6 @@ import ch.edulearn.database.entity.Entity;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -172,7 +171,6 @@ public class EntityReflector<T extends Entity> implements Reflector<T> {
     ) {
 
         try {
-
             // Acces the value method on the annotation by reflexion
             return Optional.of(el.getDeclaredAnnotation(annotationClass)
                                  .getClass()
@@ -180,7 +178,7 @@ public class EntityReflector<T extends Entity> implements Reflector<T> {
                                  .invoke(el.getDeclaredAnnotation(annotationClass))
                                  .toString());
 
-        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (Exception e) {
 
             System.out.println("Impossible to get the value from the required annotation :");
             e.printStackTrace();

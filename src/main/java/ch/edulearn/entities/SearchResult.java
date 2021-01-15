@@ -14,7 +14,7 @@ public class SearchResult extends Entity {
     /**
      * The human readable type of the search result (Utilisateur, Cours...)
      */
-    @Searchable
+    @Searchable(3)
     @Column("type")
     public String type;
 
@@ -22,7 +22,7 @@ public class SearchResult extends Entity {
      * The title of the resource represented by
      * the search result (username, lesson name)
      */
-    @Searchable
+    @Searchable(10)
     @Column("title")
     public String title;
 
@@ -30,7 +30,7 @@ public class SearchResult extends Entity {
      * The description of the resource represented by the search result.
      * Possibly not present.
      */
-    @Searchable
+    @Searchable(5)
     @Column("description")
     public String description;
 

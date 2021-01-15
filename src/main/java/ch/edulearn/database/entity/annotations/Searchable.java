@@ -12,4 +12,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Searchable {
 
+    /**
+     * Specifie the field weight in the sqlite search (see https://www.sqlite.org/fts5.html#the_bm25_function)
+     *
+     * @return The wheight of the annotated filed on the search
+     */
+    int value();
+
 }

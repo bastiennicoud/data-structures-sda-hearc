@@ -3,6 +3,7 @@ package ch.edulearn.database;
 import ch.edulearn.database.entity.Entity;
 import ch.edulearn.database.entity.annotations.Column;
 import ch.edulearn.database.entity.annotations.Identity;
+import ch.edulearn.database.entity.annotations.Searchable;
 import ch.edulearn.database.entity.annotations.Table;
 import ch.edulearn.database.entity.hydrator.exceptions.HydrationException;
 import ch.edulearn.database.entity.reflector.Reflector;
@@ -140,30 +141,64 @@ public class DataRepository extends BaseRepository {
     public <E extends Entity> List<E> textSearch(Class<E> entityClass, String[] tokens)
     throws SQLException, HydrationException, SqlQueryFormattingException {
 
-        var query = formatSqlQuery(
-                "SELECT %1$s FROM %2$s WHERE %3$s MATCH '%4$s' ORDER BY rank LIMIT 20",
-                // Fill the list of columns to retrieve
+        // Get the table name
+        var tableName =
                 Reflector.of(entityClass)
-                         .names(Column.class)
-                         .collect(Collectors.joining(", "))
-                ,
+                         .getClassAnnotationValue(Table.class)
+                         .orElseThrow();
+
+        var query = formatSqlQuery(
+                "SELECT %1$s, %2$s FROM %3$s WHERE %3$s MATCH '%4$s' ORDER BY bm25(%3$s, %5$s) LIMIT 20",
+                // The list of highlightable fields annotaded with searchable
+                String.join(", ", getFormattedHighlightedColumn(entityClass, tableName)),
+                // Other fields to retrieve from the table
                 // Fill the table
                 Reflector.of(entityClass)
-                         .getClassAnnotationValue(Table.class)
-                         .orElseThrow()
-                ,
-                // Fill where you want to search
-                Reflector.of(entityClass)
-                         .getClassAnnotationValue(Table.class)
-                         .orElseThrow()
-                ,
+                         .is(Column.class)
+                         .not(Searchable.class)
+                         .names(Column.class)
+                         .collect(Collectors.joining(", ")),
+                // The table name
+                tableName,
                 // The FTS5 match query string
                 Arrays.stream(tokens)
                       .map(t -> String.format("\" %1$s \" *", t))
-                      .collect(Collectors.joining(" "))
+                      .collect(Collectors.joining(" ")),
+                // Retrieve the search weight form the Searchable annotations
+                Reflector.of(entityClass)
+                         .is(Searchable.class)
+                         .names(Searchable.class)
+                         .collect(Collectors.joining(", "))
         );
 
         return query(query, entityClass);
+    }
+
+    /**
+     * Generate a sqlite FTS5 highlight function select
+     * (see https://www.sqlite.org/fts5.html#the_highlight_function)
+     */
+    private <E extends Entity> List<String> getFormattedHighlightedColumn(Class<E> entityClass, String tableName) {
+        // Get all the searchable fields column name
+        var searchAnnotatedFields =
+                Reflector.of(entityClass)
+                         .is(Searchable.class)
+                         .names(Column.class)
+                         .collect(Collectors.toList());
+
+        // Generate the highlight sql function with the column index
+        for (var i = 0; i < searchAnnotatedFields.size(); i++) {
+            searchAnnotatedFields.set(
+                    i,
+                    String.format(
+                            "highlight(%1$s, %2$s, '<mark>', '</mark>') AS %3$s",
+                            tableName,
+                            i,
+                            searchAnnotatedFields.get(i)
+                    )
+            );
+        }
+        return searchAnnotatedFields;
     }
 
 }

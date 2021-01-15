@@ -68,7 +68,7 @@ public class FakeDatasGenerator {
     private static void generateFakeDatas()
     throws SQLException, SqlQueryFormattingException, IllegalAccessException {
 
-        var users = generateFakeUsers(10);
+        var users = generateFakeUsers(30);
 
         indexDatasIntoFTS5(users);
 
@@ -82,15 +82,16 @@ public class FakeDatasGenerator {
     private static List<User> generateFakeUsers(int amount)
     throws SQLException, SqlQueryFormattingException, IllegalAccessException {
 
-        var users = new ArrayList<User>(20);
+        var users = new ArrayList<User>(amount);
+
         for (var i = 0; i < amount; i++) {
             User usr = new User(
                     faker.name().firstName(),
                     faker.name().lastName(),
                     faker.lorem().sentence()
             );
+            // Add the user in DB and in the list of users
             users.add(repo.insertNew(usr));
-            System.out.println(usr);
         }
         return users;
     }
@@ -101,7 +102,7 @@ public class FakeDatasGenerator {
         for (var u : users) {
             repo.insertNew(new SearchResult(
                     "Utilisateur",
-                    u.firstName + u.lastName,
+                    u.firstName + " " + u.lastName,
                     u.description,
                     Reflector.of(u.getClass()).getClassAnnotationValue(Table.class).orElseThrow(),
                     u.id
