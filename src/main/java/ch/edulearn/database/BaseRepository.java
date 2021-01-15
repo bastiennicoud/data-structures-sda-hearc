@@ -54,19 +54,25 @@ public class BaseRepository {
     }
 
     /**
-     * Perform a query that neet to return a result set.
-     * Will try to hydrate the entityClass type with the retruned results.
-     * <p>
-     * Canno't be uset with INSERT, UPDATE, or DELETE statements
+     * Perform am UPDAT, CREATE or DELETE statement
+     * **SUPPORT only one line update for now !!!***
+     * Return the inserted id ! (If you insert multiple lines you will not be wrned,
+     * but you will retrieve only the first inserted id).
      *
      * @param query The query statement you want to execute
+     * @return An array with all the inserted ids
      */
     public int execute(String query)
     throws SQLException {
 
         // SQL query execution
         try (var statement = dbConnection.createStatement()) {
-            return statement.executeUpdate(query);
+
+            statement.executeUpdate(query);
+            // Get the generated keys
+            var keys = statement.getGeneratedKeys();
+            // Return the last inserted id
+            return keys.getInt(1);
         }
 
     }

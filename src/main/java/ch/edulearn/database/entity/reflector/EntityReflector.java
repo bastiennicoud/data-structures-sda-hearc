@@ -43,6 +43,16 @@ public class EntityReflector<T extends Entity> implements Reflector<T> {
     }
 
     /**
+     * Shortcut to retrieve the first element of the stream
+     *
+     * @return Get the underlying stream if you want to perform more surgical filtering and transformations
+     */
+    public Optional<Field> findFirst() {
+
+        return fieldsStream.findFirst();
+    }
+
+    /**
      * @return Get the underlying stream as an array
      */
     public Field[] toArray() {

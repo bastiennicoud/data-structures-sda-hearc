@@ -5,6 +5,7 @@ import ch.edulearn.database.entity.Entity;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface Reflector<T extends Entity> {
@@ -24,9 +25,14 @@ public interface Reflector<T extends Entity> {
     }
 
     /**
-     * Get a stream with all the fields of the
+     * Get a stream with all the fields of the entity represented by the Reflector
      */
     Stream<Field> stream();
+
+    /**
+     * Shortcut to get the first field of the class represented by the Reflector
+     */
+    Optional<Field> findFirst();
 
     /**
      * Intermediate operation.

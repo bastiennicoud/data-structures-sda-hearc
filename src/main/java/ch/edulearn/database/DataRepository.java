@@ -11,7 +11,6 @@ import ch.edulearn.database.exceptions.SqlQueryFormattingException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,13 +28,12 @@ public class DataRepository extends BaseRepository {
     }
 
     /**
-     * Shortcut to a select all
-     * Find all elements from the table corresponding to the entity
+     * Retrieve all elements of an entity from the DB
      *
      * @param entityClass The entity you wish to hydrate with the results of the query
      * @return A collection of the entity type
      */
-    public <E extends Entity> Collection<E> findAll(Class<E> entityClass)
+    public <E extends Entity> List<E> findAll(Class<E> entityClass)
     throws SQLException, HydrationException, SqlQueryFormattingException {
 
         // Generate a select query with parameters annotated on the Entity class
@@ -84,8 +82,14 @@ public class DataRepository extends BaseRepository {
         return query(query, entityClass).get(0);
     }
 
-    public <E extends Entity> int insertNew(E entity)
-    throws SQLException, SqlQueryFormattingException {
+    /**
+     * @param entity The entity you whant to insert in the databse
+     * @param <E>    Type of the entity
+     * @return The entity hydrated with the database generated ID
+     * @throws IllegalAccessException The Identity field cannot be accesed
+     */
+    public <E extends Entity> E insertNew(E entity)
+    throws SQLException, SqlQueryFormattingException, IllegalAccessException {
 
         var query = formatSqlQuery(
                 "INSERT INTO %1$s (%2$s) VALUES (%3$s); ",
@@ -111,7 +115,19 @@ public class DataRepository extends BaseRepository {
                          .collect(Collectors.joining(", "))
         );
 
-        return execute(query);
+        // Execute query and save inserted ID
+        var insertedId = execute(query);
+        // Retrieve the entity Identity field by reflexion
+        var identityField = Reflector
+                .of(entity.getClass())
+                .is(Identity.class)
+                .findFirst();
+
+        // Set the identity field by reflexion (if there is a identity field in the entity
+        if (identityField.isPresent())
+            identityField.get().set(entity, insertedId);
+
+        return entity;
     }
 
     /**

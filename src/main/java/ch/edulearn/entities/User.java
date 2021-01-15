@@ -5,6 +5,8 @@ import ch.edulearn.database.entity.annotations.Column;
 import ch.edulearn.database.entity.annotations.Identity;
 import ch.edulearn.database.entity.annotations.Table;
 
+import java.util.Objects;
+
 @Table("users")
 public class User extends Entity {
 
@@ -72,5 +74,34 @@ public class User extends Entity {
         this.description = description;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return id == user.id &&
+                Objects.equals(firstName, user.firstName) &&
+                Objects.equals(lastName, user.lastName) &&
+                Objects.equals(description, user.description);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, firstName, lastName, description);
+    }
+
+    @Override
+    public String toString() {
+
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 
 }
