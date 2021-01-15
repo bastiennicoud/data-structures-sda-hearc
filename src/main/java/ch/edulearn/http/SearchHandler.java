@@ -95,10 +95,21 @@ public class SearchHandler extends HttpHandler {
             sendHttpError(
                     exchange,
                     500,
-                    "Error while performing json serialisation or deserialization"
+                    "Error while performing json serialisation or deserialization."
             );
 
             System.out.println("Error while parsing or serializing json");
+            e.printStackTrace();
+
+        } catch (Exception e) {
+
+            sendHttpError(
+                    exchange,
+                    500,
+                    "Error while trying to handle the request."
+            );
+
+            System.out.println("An exception occurs while trying to handle a search request :");
             e.printStackTrace();
 
         }

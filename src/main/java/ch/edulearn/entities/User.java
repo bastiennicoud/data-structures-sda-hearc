@@ -3,20 +3,23 @@ package ch.edulearn.entities;
 import ch.edulearn.database.entity.Entity;
 import ch.edulearn.database.entity.annotations.Column;
 import ch.edulearn.database.entity.annotations.Identity;
+import ch.edulearn.database.entity.annotations.NotNull;
 import ch.edulearn.database.entity.annotations.Table;
 
 import java.util.Objects;
 
-@Table("users")
+@Table("user")
 public class User extends Entity {
 
     @Identity
     @Column("user_id")
     public int id;
 
+    @NotNull
     @Column("first_name")
     public String firstName;
 
+    @NotNull
     @Column("last_name")
     public String lastName;
 

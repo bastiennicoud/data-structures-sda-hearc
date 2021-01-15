@@ -96,6 +96,28 @@ public class FakeDatasGenerator {
         return users;
     }
 
+    /**
+     * Generate some fake courses and insert it into the db
+     *
+     * @return A list of generated users filled with the generated databse id
+     */
+    private static List<User> generateFakeCourses(int amount)
+    throws SQLException, SqlQueryFormattingException, IllegalAccessException {
+
+        var users = new ArrayList<User>(amount);
+
+        for (var i = 0; i < amount; i++) {
+            User usr = new User(
+                    faker.name().firstName(),
+                    faker.name().lastName(),
+                    faker.lorem().sentence()
+            );
+            // Add the user in DB and in the list of users
+            users.add(repo.insertNew(usr));
+        }
+        return users;
+    }
+
     private static void indexDatasIntoFTS5(List<User> users)
     throws IllegalAccessException, SQLException, SqlQueryFormattingException {
 
