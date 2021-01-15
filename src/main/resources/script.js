@@ -19,7 +19,7 @@ const registerSearch = function () {
  * @param needle {String} The search string from the input
  * @returns {Promise<void>}
  */
-const performSearch = async function (needle) {
+const performSearch = async (needle) => {
 
     try {
 
@@ -74,6 +74,14 @@ const performSearch = async function (needle) {
     } catch (e) {
 
         console.error("Impossible to perform the search", e)
+
+        document.querySelector('#search_results').innerHTML = `
+        <div class="result_item error">
+            <div class="result_title">
+                <p>Une erreur est survenue lors de la recherche.</p>
+            </div>
+        </div>
+        `
 
     }
 

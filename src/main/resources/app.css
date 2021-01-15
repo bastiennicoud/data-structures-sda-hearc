@@ -97,6 +97,10 @@ Results box and results items
     flex-wrap: wrap;
 }
 
+.error {
+    background-color: orange;
+}
+
 .result_title {
     width: 70%;
 }
