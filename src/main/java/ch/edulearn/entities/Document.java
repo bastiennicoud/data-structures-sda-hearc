@@ -29,6 +29,12 @@ public class Document extends Entity {
         this.description = description;
     }
 
+    public Document(String title, String description) {
+
+        this.title = title;
+        this.description = description;
+    }
+
     public Document() {
 
     }

@@ -5,7 +5,7 @@ package ch.edulearn.database.entity;
  */
 public abstract class Entity {
 
-    protected Entity() {
+    public Entity() {
 
     }
 

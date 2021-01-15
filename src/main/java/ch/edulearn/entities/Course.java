@@ -29,6 +29,16 @@ public class Course extends Entity {
         this.description = description;
     }
 
+    public Course(String title, String description) {
+
+        this.title = title;
+        this.description = description;
+    }
+
+    public Course() {
+
+    }
+
     @Override
     public String toString() {
 
@@ -37,10 +47,6 @@ public class Course extends Entity {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 '}';
-    }
-
-    public Course() {
-
     }
 
     @Override
