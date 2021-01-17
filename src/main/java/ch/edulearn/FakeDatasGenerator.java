@@ -45,6 +45,7 @@ public class FakeDatasGenerator {
         generateDatabaseSchema();
 
         generateFakeDatas();
+
     }
 
     /**

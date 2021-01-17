@@ -23,6 +23,14 @@ public interface Hydrator<T> {
         return new EntityHydrator<>(entityClass);
     }
 
-    List<T> hydrate(ResultSet source) throws HydrationException;
+    /**
+     * Hydrate the entity type form a result set
+     *
+     * @param source   A result set from the ch.edulearn.database that match the entity you want to hydrate
+     * @param capacity The number of rows returned by the DB
+     * @return An ArrayList of the hydrated ch.edulearn.entities
+     * @throws HydrationException If there is an error during the hydration process
+     */
+    List<T> hydrate(ResultSet source, int capacity) throws HydrationException;
 
 }

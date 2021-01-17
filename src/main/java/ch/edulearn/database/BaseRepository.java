@@ -48,7 +48,7 @@ public class BaseRepository {
 
         try (var statement = dbConnection.createStatement()) {
             var results = statement.executeQuery(query);
-            return Hydrator.of(entityClass).hydrate(results);
+            return Hydrator.of(entityClass).hydrate(results, 20);
         }
 
     }

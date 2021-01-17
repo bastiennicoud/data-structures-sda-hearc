@@ -8,7 +8,6 @@ import ch.edulearn.database.entity.hydrator.exceptions.HydrationException;
 import ch.edulearn.database.entity.reflector.Reflector;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,16 +28,16 @@ public class EntityHydrator<E extends Entity> implements Hydrator<E> {
      * Hydrate the entity type form a result set
      *
      * @param results A result set from the ch.edulearn.database that match the entity you want to hydrate
+     * @param limit   The number of rows returned by the DB
      * @return An ArrayList of the hydrated ch.edulearn.entities
      * @throws HydrationException If there is an error during the hydration process
      */
-    public ArrayList<E> hydrate(ResultSet results) throws HydrationException {
+    public ArrayList<E> hydrate(ResultSet results, int limit) throws HydrationException {
 
         try {
 
-            var datas = new ArrayList<E>(20);
+            var datas = new ArrayList<E>(limit);
 
-            // Iterates trough the query results
             while (results.next()) {
 
                 var entity = hydrateEntity(
@@ -51,12 +50,7 @@ public class EntityHydrator<E extends Entity> implements Hydrator<E> {
 
             return datas;
 
-        } catch (NoSuchMethodException |
-                InstantiationException |
-                IllegalAccessException |
-                SQLException |
-                EntityHydrationException |
-                InvocationTargetException e) {
+        } catch (Exception e) {
 
             throw new HydrationException(
                     "Error while trying to hydrate the database results to the " + entityClass.getName() + " entity.",
