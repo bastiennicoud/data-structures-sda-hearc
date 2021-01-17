@@ -1,10 +1,12 @@
 package ch.edulearn.database;
 
+import ch.edulearn.database.exceptions.DatabaseConnexionException;
 import org.sqlite.SQLiteConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Objects;
 
 /**
  * Container to abastract a JDBC connexion to sqlite databas
@@ -12,25 +14,44 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection implements AutoCloseable {
 
-    // SQLite ch.edulearn.database file (relative from project root)
-    private final String connectionString = "jdbc:sqlite:./src/main/resources/database.db";
-
     private final Connection dbConnection;
+
+    // SQLite ch.edulearn.database file (relative from project root)
+    private String connectionString = "jdbc:sqlite::resource:";
 
     /**
      * Initialise a connexion to the db when creating an instance
      */
-    public DatabaseConnection() throws SQLException {
+    public DatabaseConnection() throws DatabaseConnexionException {
 
-        SQLiteConfig c = new SQLiteConfig();
-        c.setEncoding(SQLiteConfig.Encoding.UTF8);
+        try {
+            // Dynamically retrieve the path of the databse resource
+            connectionString += Objects.requireNonNull(
+                    getClass().getClassLoader().getResource("database.db")
+            );
+            System.out.println(connectionString);
 
-        this.dbConnection = DriverManager.getConnection(
-                connectionString,
-                c.toProperties()
-        );
+            SQLiteConfig c = new SQLiteConfig();
+            c.setEncoding(SQLiteConfig.Encoding.UTF8);
 
-        System.out.println("Connexion established to ch.edulearn.database.");
+            this.dbConnection = DriverManager.getConnection(
+                    connectionString,
+                    c.toProperties()
+            );
+
+            System.out.println("Connexion established to ch.edulearn.database.");
+
+        } catch (NullPointerException e) {
+            throw new DatabaseConnexionException(
+                    "Impossible to find the sqlite database file in the resources folder.",
+                    e
+            );
+        } catch (SQLException e) {
+            throw new DatabaseConnexionException(
+                    "Impossible to establish the connexion to database.",
+                    e
+            );
+        }
 
     }
 

@@ -6,6 +6,7 @@ import ch.edulearn.database.SchemaDatabaseRepository;
 import ch.edulearn.database.entity.Entity;
 import ch.edulearn.database.entity.annotations.Table;
 import ch.edulearn.database.entity.reflector.Reflector;
+import ch.edulearn.database.exceptions.DatabaseConnexionException;
 import ch.edulearn.database.exceptions.SqlQueryFormattingException;
 import ch.edulearn.entities.Course;
 import ch.edulearn.entities.Document;
@@ -31,7 +32,7 @@ public class FakeDatasGenerator {
 
     // This script allows to generate a test ch.edulearn.database with fake datas
     public static void main(String[] args)
-    throws SQLException, SqlQueryFormattingException, IllegalAccessException {
+    throws SQLException, SqlQueryFormattingException, IllegalAccessException, DatabaseConnexionException {
 
         // initialize a connexion to the DB
         conn = new DatabaseConnection();

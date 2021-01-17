@@ -2,6 +2,7 @@ package ch.edulearn;
 
 import ch.edulearn.database.DataRepository;
 import ch.edulearn.database.DatabaseConnection;
+import ch.edulearn.database.exceptions.DatabaseConnexionException;
 import ch.edulearn.http.HomePageHandler;
 import ch.edulearn.http.ScriptHandler;
 import ch.edulearn.http.SearchHandler;
@@ -10,7 +11,6 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.sql.SQLException;
 
 /**
  * EduLearn ch.edulearn.Main
@@ -52,9 +52,9 @@ public class Main {
             System.out.println("Go to your browser and try search on EduLearn !");
             System.out.println("You can stop the server with ctrl+c");
 
-        } catch (SQLException e) {
+        } catch (DatabaseConnexionException e) {
 
-            System.out.println("An SQLException occurred when trying to start the ch.edulearn.database connexion :");
+            System.out.println("An Exception occurred when trying to start the ch.edulearn.database connexion :");
             e.printStackTrace();
 
         } catch (IOException e) {
