@@ -34,13 +34,13 @@ public class DataRepository extends BaseRepository {
      * @param entityClass The entity you wish to hydrate with the results of the query
      * @return A collection of the entity type
      */
-    public <E extends Entity> List<E> findAll(Class<E> entityClass)
+    public <E extends Entity> List<E> findAll(Class<E> entityClass, int limit)
     throws SQLException, HydrationException, SqlQueryFormattingException {
 
         // Generate a select query with parameters annotated on the Entity class
         var query = formatSqlQuery(
                 // Query template
-                "SELECT %1$s FROM %2$s",
+                "SELECT %1$s FROM %2$s LIMIT %3$s",
                 // Get the columns names
                 Reflector.of(entityClass)
                          .names(Column.class)
@@ -49,10 +49,11 @@ public class DataRepository extends BaseRepository {
                 // Get the table name
                 Reflector.of(entityClass)
                          .getClassAnnotationValue(Table.class)
-                         .orElseThrow()
+                         .orElseThrow(),
+                limit
         );
 
-        return query(query, entityClass);
+        return query(query, entityClass, limit);
 
     }
 
@@ -80,7 +81,7 @@ public class DataRepository extends BaseRepository {
                 id
         );
 
-        return query(query, entityClass).get(0);
+        return query(query, entityClass, 1).get(0);
     }
 
     /**
@@ -137,8 +138,9 @@ public class DataRepository extends BaseRepository {
      *
      * @param entityClass The entity you wish to hydrate with the results of the query
      * @param tokens      All the tokens you want to search
+     * @param limit       Sql results limit
      */
-    public <E extends Entity> List<E> textSearch(Class<E> entityClass, String[] tokens)
+    public <E extends Entity> List<E> textSearch(Class<E> entityClass, String[] tokens, int limit)
     throws SQLException, HydrationException, SqlQueryFormattingException {
 
         // Get the table name
@@ -148,7 +150,7 @@ public class DataRepository extends BaseRepository {
                          .orElseThrow();
 
         var query = formatSqlQuery(
-                "SELECT %1$s, %2$s FROM %3$s WHERE %3$s MATCH '%4$s' ORDER BY bm25(%3$s, %5$s) LIMIT 20",
+                "SELECT %1$s, %2$s FROM %3$s WHERE %3$s MATCH '%4$s' ORDER BY bm25(%3$s, %5$s) LIMIT %6$s",
                 // The list of highlightable fields annotaded with searchable
                 String.join(", ", getFormattedHighlightedColumn(entityClass, tableName)),
                 // Other fields to retrieve from the table
@@ -168,10 +170,11 @@ public class DataRepository extends BaseRepository {
                 Reflector.of(entityClass)
                          .is(Searchable.class)
                          .names(Searchable.class)
-                         .collect(Collectors.joining(", "))
+                         .collect(Collectors.joining(", ")),
+                limit
         );
 
-        return query(query, entityClass);
+        return query(query, entityClass, limit);
     }
 
     /**

@@ -61,7 +61,8 @@ public class SearchHandler extends HttpHandler {
             // Perform a text search on the DB with all the tokens of the needle
             var results = dataRepository.textSearch(
                     SearchResult.class,
-                    search.get("needle").asText().split(" ")
+                    search.get("needle").asText().split(" "),
+                    30
             );
 
             // serialise the search results

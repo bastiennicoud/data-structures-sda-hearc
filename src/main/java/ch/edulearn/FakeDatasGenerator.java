@@ -44,7 +44,7 @@ public class FakeDatasGenerator {
 
         generateDatabaseSchema();
 
-        generateFakeDatas();
+        generateFakeDatas(30);
 
     }
 
@@ -73,12 +73,12 @@ public class FakeDatasGenerator {
     /**
      * Fill the database tables with some fake datas
      */
-    private static void generateFakeDatas()
+    private static void generateFakeDatas(int amount)
     throws SQLException, SqlQueryFormattingException, IllegalAccessException {
 
-        var users = generateFakeUsers(30);
-        var courses = generateFakeCourses(30);
-        var docs = generateFakeDocuments(30);
+        var users = generateFakeUsers(amount);
+        var courses = generateFakeCourses(amount);
+        var docs = generateFakeDocuments(amount);
 
         indexDatasIntoFTS5(users);
         indexDatasIntoFTS5(courses);
