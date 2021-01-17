@@ -29,7 +29,6 @@ public class DatabaseConnection implements AutoCloseable {
             connectionString += Objects.requireNonNull(
                     getClass().getClassLoader().getResource("database.db")
             );
-            System.out.println(connectionString);
 
             SQLiteConfig c = new SQLiteConfig();
             c.setEncoding(SQLiteConfig.Encoding.UTF8);

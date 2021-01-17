@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Measurement(iterations = 3)
 public class ListsBenchmarks {
 
+    // Perform the benchmarks with 10'000 elements
     @Param({"10000"})
     public int N;
 
@@ -38,6 +39,7 @@ public class ListsBenchmarks {
                 .forks(1)
                 .build();
 
+        // Run JMH benchmarks
         new Runner(opt).run();
 
     }
@@ -108,6 +110,9 @@ public class ListsBenchmarks {
         b.consume(list);
     }
 
+    /**
+     * ArrayList iteration with a foreach loop
+     */
     @Benchmark
     public void benchIterationOnArrayListWithForEach(Blackhole b) {
 
@@ -116,6 +121,9 @@ public class ListsBenchmarks {
         }
     }
 
+    /**
+     * ArrayList iteration with a for loop
+     */
     @Benchmark
     public void benchIterationOnArrayListWithFor(Blackhole b) {
 
@@ -125,6 +133,9 @@ public class ListsBenchmarks {
         }
     }
 
+    /**
+     * LinkedList iteration with a foreach loop
+     */
     @Benchmark
     public void benchIterationOnLinkedListWithForEach(Blackhole b) {
 
@@ -133,6 +144,9 @@ public class ListsBenchmarks {
         }
     }
 
+    /**
+     * LinkedList iteration with a for loop
+     */
     @Benchmark
     public void benchIterationOnLinkedListWithFor(Blackhole b) {
 

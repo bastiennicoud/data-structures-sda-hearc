@@ -1,6 +1,7 @@
-# DataStructures
+# DataStructures EduLearn
 
-> Experimentation's around data structures in java.
+> Little application for the module 633-1.1 at HE-ARC.
+> This app implements a simple text search page accessible wia a web page on localhost:8080
 
 ## Requirements
 
