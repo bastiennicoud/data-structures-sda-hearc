@@ -5,6 +5,9 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * Return the css stylesheet
+ */
 public class StyleSheetHandler extends HttpHandler {
 
     @Override

@@ -5,6 +5,9 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * Return the homepage
+ */
 public class HomePageHandler extends HttpHandler {
 
     @Override

@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 /**
- * Container to abastract a JDBC connexion to sqlite databas
+ * Container to abastract a JDBC connexion to sqlite database
  * Implement AutoClosable, therefore it can be used in a try with resources
  */
 public class DatabaseConnection implements AutoCloseable {

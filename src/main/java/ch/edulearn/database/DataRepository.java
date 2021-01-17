@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Add specific requests query bulders to BaseRepository
+ * Provides some specific query builders for find, insert and text search on sqlite FTS5 table
  */
 public class DataRepository extends BaseRepository {
 
@@ -93,6 +93,7 @@ public class DataRepository extends BaseRepository {
     public <E extends Entity> E insertNew(E entity)
     throws SQLException, SqlQueryFormattingException, IllegalAccessException {
 
+        // Generate an insert query with the parameters from the entity annotations
         var query = formatSqlQuery(
                 "INSERT INTO %1$s (%2$s) VALUES (%3$s); ",
 
@@ -149,6 +150,7 @@ public class DataRepository extends BaseRepository {
                          .getClassAnnotationValue(Table.class)
                          .orElseThrow();
 
+        // Generate the specific sqlite FTS5 text search query
         var query = formatSqlQuery(
                 "SELECT %1$s, %2$s FROM %3$s WHERE %3$s MATCH '%4$s' ORDER BY bm25(%3$s, %5$s) LIMIT %6$s",
                 // The list of highlightable fields annotaded with searchable

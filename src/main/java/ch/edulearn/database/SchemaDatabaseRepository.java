@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 /**
- * This specific repository contain requests to generate the database scema
+ * This specific repository contain query builders that generate schema creation and deletion queries
  */
 public class SchemaDatabaseRepository extends BaseRepository {
 

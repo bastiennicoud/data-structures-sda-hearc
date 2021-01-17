@@ -5,6 +5,9 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * Return a little javascript fot the client
+ */
 public class ScriptHandler extends HttpHandler {
 
     @Override
